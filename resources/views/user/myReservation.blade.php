@@ -90,7 +90,6 @@
                             <th class="column7">Branch</th>
                             <th class="column8">Status</th>
                             <th class="column9">Operate</th>
-                            <th class="column10">Car Type</th>
                         </tr>
                     </thead>
                     <tbody>
