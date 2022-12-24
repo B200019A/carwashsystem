@@ -55,7 +55,7 @@ class adminChangePageController extends Controller
             ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
             ->leftjoin('branches','branches.id','=','reservations.branchId')
             ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus','branches.name as branchName')
-            ->get();
+            ->paginate(10);
 
         return view('/admin/reservationManagement')->with('viewReservations', $viewReservations);
     }
@@ -111,8 +111,8 @@ class adminChangePageController extends Controller
      public function editNotification($id)
      {
         $notifcations = notification::all()->where('id', $id);
- 
- 
+
+
          return view('/admin/editNotification')->with('notifications',$notifcations);
      }
 
@@ -120,32 +120,32 @@ class adminChangePageController extends Controller
      public function editReferral($id)
      {
         $referrals = referral::all()->where('id', $id);
- 
+
          return view('/admin/editReferral')->with('referrals',$referrals);
      }
 
      //go to /admin/editMemberPoint page
      public function editMemberPoint($id){
         $memberPoints = memberPoint::all()->where('id', $id);
- 
+
         return view('/admin/editMemberPoint')->with('memberPoints',$memberPoints);
-        
+
     }
 
     //go to /admin/editMemberLevel page
     public function editMemberLevel($id){
 
         $memberLevels = memberLevel::all()->where('id', $id);
- 
+
         return view('/admin/editMemberLevel')->with('memberLevels',$memberLevels);
-        
+
     }
     //go to /admin/editPackageSubscription page
     public function editPackageSubscription($id){
 
         $packages = packageSubscription::all()->where('id', $id);
- 
+
         return view('/admin/editPackageSubscription')->with('packages',$packages);
-        
+
     }
 }

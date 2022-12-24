@@ -80,6 +80,9 @@ Route::get('/user/addReservation_package', function () {
 Route::get('/user/selectService', function () {
     return view('/user/selectService');
 });
+Route::get('/user/invoicePDF', function () {
+    return view('/user/invoicePDF');
+});
 //<----------user- end ------->
 
 Auth::routes();
@@ -138,8 +141,9 @@ Route::get('/user/addReservation_package/{id}', [App\Http\Controllers\user\reser
 Route::post('/user/addReservationPackage', [App\Http\Controllers\user\reservationController::class, 'addNewReservation_package'])->name('addNewReservation_package');
 //<----package end -->
 
-
-
+//<!---print invoice-->
+Route::get('/user/invoicePDF/{id}', [App\Http\Controllers\user\reservationController::class, 'printInvoice'])->name('printInvoice');
+//<!--print invoice end-->
 //<-------user operate end---------->
 
 Route::prefix('admin')
@@ -259,7 +263,7 @@ Route::prefix('admin')
         //delete the member level
         Route::get('/deleteMemberLevel/{id}', [App\Http\Controllers\admin\memberLevelController::class, 'deleteMemberLevel'])->name('deleteMemberLevel');
         //<----member level management end-->
-        
+
         //<----package subsciption management-->
         Route::post('/packageSubscriptionManagement', [App\Http\Controllers\admin\packageController::class, 'addPackageSubscription'])->name('addPackageSubscription');
         //go to the edit member level page

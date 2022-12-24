@@ -13,7 +13,11 @@ use Auth;
 class referralController extends Controller
 {
     public function referral(){
-        return view('/user/referral');
+        $invitecode = DB::table('invite_codes')->where('memberId',Auth::id())->get();
+
+        //echo Auth::id();
+
+        return view('/user/referral')->with('invitecodes',$invitecode);
     }
 
     public function addInviteCode(){
@@ -23,7 +27,7 @@ class referralController extends Controller
         $searchTimes = inviteCode::where('memberId','=',Auth::id())->where('times','=',0)->first();
         //when times equal 0 , u cannot input invite code again!
 
-        if($searchTimes){    
+        if($searchTimes){
             Session::flash('FindFailedInviteCode',"You already input invite code!(one times only)");
 
         }else{
@@ -34,7 +38,7 @@ class referralController extends Controller
 
                 $times = $freeTimes->times;
                 //$freewash=1;
-    
+
                 //********find the column data in invite code table *****/
                 $inviteCodeSender = inviteCode::where('invitecode',$r->inviteCode);
                 //select the freewash frequency
@@ -42,7 +46,7 @@ class referralController extends Controller
                 //set data of freewash plus one
                 $plusFreeWashFrequencySender = $freeWashFrequencySender->freewash+$times;
                 $inviteCodeSender->update(['freewash'=> $plusFreeWashFrequencySender]);
-    
+
                 //sender of invite code also get 1 free wash
                 //add 1 free wash to input user and sender of invite code also get 1 free wash
                 $addFreeWashReceiver = inviteCode::where('memberId',Auth::id());
@@ -53,9 +57,9 @@ class referralController extends Controller
                 //set data of freewash plus one
                 $plusFreeWashFrequencyReceiver = $freeWashFrequencyReceiver->freewash+$times;
                 $addFreeWashReceiver->update(['freewash'=> $plusFreeWashFrequencyReceiver]);
-              
 
-             }         
+
+             }
         }
         return redirect()->route('referral');
 

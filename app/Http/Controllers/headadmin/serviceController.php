@@ -34,8 +34,8 @@ class serviceController extends Controller
     public function updateService()
     {
         $r = request();
-         //if image no exist will be add
-         if ($r->file('seviceImage') != '') {
+        //if image no exist will be add
+        if ($r->file('seviceImage') != '') {
             $image = $r->file('seviceImage');
             $image->move('images/service', $image->getClientOriginalName()); //images is the location
             $imageName = $image->getClientOriginalName();

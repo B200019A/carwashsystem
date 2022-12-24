@@ -123,7 +123,7 @@
                                 <td style="background-color: grey;">{{ $viewReservation->status }}</td>
 
                             </tr>
-                        @elseif($viewReservation->status == 'refund success' || $viewReservation->status=='refund success by package')
+                        @elseif($viewReservation->status == 'refund success' || $viewReservation->status == 'refund success by package')
                             <tr>
                                 <td> {{ $viewReservation->id }}</td>
                                 <td> {{ $viewReservation->orderId }}</td>
@@ -197,11 +197,18 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-sm-3"></div>
+        <div class="col-sm-3">
+
+        </div>
     </div>
+        <div class="row">
+        <div class="">
+                {{ $viewReservations->links() }}
+        </div>
+        </div>
 
     <script>
-        function searchFunction(){
+        function searchFunction() {
 
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("keyword");

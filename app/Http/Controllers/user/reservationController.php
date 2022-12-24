@@ -17,6 +17,7 @@ use App\Models\memberPoint;
 use App\Models\memberLevel;
 use App\Models\userPackageSubscription;
 use Auth;
+use PDF;
 use Carbon\Carbon;
 
 class reservationController extends Controller
@@ -24,12 +25,11 @@ class reservationController extends Controller
     public function viewSelectService()
     {
         //select all branch data
-       $userPackages = DB::table('user_package_subscriptions')
+        $userPackages = DB::table('user_package_subscriptions')
             ->leftjoin('package_subscriptions', 'package_subscriptions.id', '=', 'user_package_subscriptions.packageId')
             ->select('package_subscriptions.name as packageName', 'user_package_subscriptions.*')
             ->where('userId', '=', Auth::id())
             ->get();
-
 
         $services = service::all();
 
@@ -198,7 +198,7 @@ class reservationController extends Controller
                     'memberPoint' => $totalGetMemberPoint,
                     'orderPackageId' => '0',
                 ]);
-                
+
                 //get the order id
                 $orderId = DB::table('order_reservations')
                     ->where('userId', '=', Auth::id())
@@ -212,7 +212,7 @@ class reservationController extends Controller
                     ->where('userId', '=', Auth::id())
                     ->orderBy('created_at', 'DESC')
                     ->first();
-                $reservationNumber1= $reservationId2->id;
+                $reservationNumber1 = $reservationId2->id;
                 //update new reservation to the order id
                 DB::update('update reservations set orderID = ? where id = ?', [$orderNumber, $reservationNumber1]);
 
@@ -273,7 +273,7 @@ class reservationController extends Controller
         $allReservation = DB::table('order_reservations')
             ->leftjoin('reservations', 'reservations.id', '=', 'order_reservations.reservationId')
             ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
-            ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
+            ->select('order_reservations.id as orderId', 'order_reservations.amount as totalAmount', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
             ->where('order_reservations.userId', '=', Auth::id())
             ->get();
         return view('/user/myReservation')->with('allReservation', $allReservation);
@@ -374,8 +374,7 @@ class reservationController extends Controller
             DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [2, $id]);
 
             return redirect()->route('viewMyReservation');
-        }else{
-
+        } else {
             //update reservation to cancel
             $reservation = reservation::find($id);
             $reservation->status = 'cancelByPackage';
@@ -503,7 +502,7 @@ class reservationController extends Controller
                 //<--minus the package wash times-->
                 //get the user order package id
                 $orderPackageId = $r->orderPackageId;
-     
+
                 $userOrderPackage = userPackageSubscription::where('id', $orderPackageId)->first();
 
                 $MinusWashTimes = $userOrderPackage->times - 1;
@@ -516,5 +515,36 @@ class reservationController extends Controller
             }
             //if select other service
         }
+    }
+
+    public function printInvoice($id)
+    {
+        $reservationItem = DB::table('order_reservations')
+
+            ->leftjoin('reservations', 'reservations.id', '=', 'order_reservations.reservationId')
+            ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
+            ->select('reservations.*', 'order_reservations.amount as totalAmount', 'branches.name as branchName','branches.address as branchAddress')
+
+            ->where('order_reservations.reservationId', '=', $id) //the item haven't make payment
+
+            ->where('order_reservations.userID', '=', Auth::id())
+
+            ->get();
+
+        $totalAmount = DB::table('order_reservations')
+            ->where('reservationId', '=', $id)
+            ->first();
+        $totalPrice = $totalAmount->amount;
+
+        $price = DB::table('reservations')
+            ->where('id', '=', $id)
+            ->first();
+
+        $reservationPrice = $price->price;
+        $totalDiscount = $reservationPrice - $totalPrice;
+        //return reservation table data and carts table data to the invoicePDF.blade.php
+        $pdf = PDF::loadView('user/invoicePDF', compact('reservationItem', 'totalDiscount'));
+        //dowload the pdf file
+        return $pdf->download('ReservationInvoice_report.pdf');
     }
 }

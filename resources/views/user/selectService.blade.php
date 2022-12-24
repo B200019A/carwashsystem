@@ -1,3 +1,5 @@
+@extends('layouts.app')
+@section('content')
 <style>
     *,
     *::before,
@@ -11,11 +13,11 @@
 
     body {
         color: #999999;
-        font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        font-style: normal;
-        font-weight: 400;
+        /*font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+        /*font-style: normal;
+        font-weight: 400;*/
         letter-spacing: 0;
-        padding: 1rem;
+        /*padding: 1rem;*/
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -60,15 +62,23 @@
         display: flex;
         padding: 1rem;
     }
+    .cards__item_package {
+        padding: 1rem;
+    }
 
     @media (min-width: 40rem) {
         .cards__item {
+            width: 50%;
+        }
+        .cards__item_package {
             width: 50%;
         }
     }
 
     @media (min-width: 56rem) {
         .cards__item {
+            width: 33.3333%;
+        } .cards__item_package {
             width: 33.3333%;
         }
     }
@@ -149,7 +159,7 @@
     }
 </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-
+<div class="container">
 <h1 style="text-align:center;">Select Services<h1>
         <ul class="cards">
             @foreach ($services as $service)
@@ -173,16 +183,17 @@
                 <ul class="cards">
                     @foreach ($userPackages as $userPackage)
                         @if ($userPackage->paymentStatus == 1)
-                            <li class="cards__item">
+                            @if($userPackage->times >=1)
+                            <li class="cards__item_package">
                                 <div class="card">
                                     <div class="card__image"
                                         style="background-image: url({{ asset('images/carwash.jpeg') }});">
                                     </div>
                                     <div class="card__content">
                                         <div class="card__title">{{ $userPackage->packageName }}</div>
-                                        <p class="card__text">Lef: {{ $userPackage->times }} <br> it's safe to clean
+                                        <p class="card__text">Left: {{ $userPackage->times }}<!-- <br> it's safe to clean
                                             your engine bay and we recommend it from time to time in order to keep it
-                                            clean, just like you do with the rest of the car.
+                                            clean, just like you do with the rest of the car.-->
 
                                         </p>
                                         <a href="{{ route('viewAddReservation_package', ['id' => $userPackage->id]) }}"><button
@@ -190,7 +201,10 @@
                                     </div>
                                 </div>
                             </li>
+                            @endif
                         @endif
                     @endforeach
                     </div>
                 </ul>
+            </div>
+@endsection

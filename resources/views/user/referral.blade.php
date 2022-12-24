@@ -12,14 +12,18 @@
                 <label for="inviteCode">Invite Code</label>
                 <input class="form-control" type="text" id="inviteCode" name="inviteCode" >
             </div>
-            
-          
+
+
             <button type="submit" class="btn btn-primary">Enroll Invite Code</button>
         </form>
         <br><br>
+
         <div style="text-align:left">
-        <input type="text" value="qe12QW" id="myInput" readonly>
+         @foreach($invitecodes as $invitecode)
+        <input type="text" value="{{$invitecode->invitecode}}" id="myInput" readonly>
+        @endforeach
         <button class="btn btn-primary" onclick="copyReferral()">Copy text</button>
+
 </div>
     </div>
     <div class="col-sm-3"></div>
