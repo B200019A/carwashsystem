@@ -53,18 +53,64 @@ class adminChangePageController extends Controller
         }
         $viewReservations = DB::table('reservations')
             ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
-            ->leftjoin('branches','branches.id','=','reservations.branchId')
-            ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus','branches.name as branchName')
+            ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
+            ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
             ->get();
 
         return view('/admin/reservationManagement')->with('viewReservations', $viewReservations);
+    }
+    //go to /admin/reservationManagement page
+    public function viewReservationManagementDate()
+    {
+        $checkReservationStatus = reservation::whereNot('status', 'cancel')->get();
+        $currentDate = Carbon::now()->format('Y-m-d');
+        $currentTime = Carbon::now()->format('H:i:s');
+        foreach ($checkReservationStatus as $checkDate) {
+            $reservationId = $checkDate->id;
+            $date = $checkDate->date;
+            $time = $checkDate->timeSlot;
+
+            //check status for tbe date
+            if ($date == $currentDate) {
+                if ($time == '1') {
+                    $timeSlot = Carbon::parse('10:00:00')->format('H:i:s');
+                } elseif ($time == '2') {
+                    $timeSlot = Carbon::parse('12:00:00')->format('H:i:s');
+                } elseif ($time == '3') {
+                    $timeSlot = Carbon::parse('14:00:00')->format('H:i:s');
+                } elseif ($time == '4') {
+                    $timeSlot = Carbon::parse('16:00:00')->format('H:i:s');
+                } else {
+                    $timeSlot = Carbon::parse('18:00:00')->format('H:i:s');
+                }
+                //check time slot is before current time or not
+                if ($timeSlot < $currentTime) {
+                    DB::update('update reservations set status = ? where id = ?', ['expired', $reservationId]);
+                }
+            } elseif ($date < $currentDate) {
+                DB::update('update reservations set status = ? where id = ?', ['expired', $reservationId]);
+            }
+        }
+        $viewReservations = DB::table('reservations')
+            ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
+            ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
+            ->select('order_reservations.id as orderId', 'order_reservations.amount as totalAmount', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
+            ->where('reservations.date','=',$currentDate)
+            ->get();
+
+        $branches = branch::where('status','=','exist')->get();
+
+        //echo($viewReservations);
+        return view('/admin/reservationManagementDate')->with('allReservation', $viewReservations)->with('branches',$branches);
     }
 
     //go to /admin/membershipManagement page
     public function viewMembershipManagement()
     {
-        $memberLevels = DB::table('member_levels')->orderBy('targetPoint','asc')->get();
-        return view('/admin/membershipManagement')->with('memberLevels',$memberLevels);
+        $memberLevels = DB::table('member_levels')
+            ->orderBy('targetPoint', 'asc')
+            ->get();
+        return view('/admin/membershipManagement')->with('memberLevels', $memberLevels);
     }
 
     //go to /admin/voucherManagement page
@@ -78,7 +124,7 @@ class adminChangePageController extends Controller
     {
         $referrals = referral::all();
 
-        return view('/admin/referralManagement')->with('referrals',$referrals);
+        return view('/admin/referralManagement')->with('referrals', $referrals);
     }
 
     //go to /admin/memberPointManagement page
@@ -86,7 +132,7 @@ class adminChangePageController extends Controller
     {
         $memberPoints = memberPoint::all();
 
-        return view('/admin/memberPointManagement')->with('memberPoints',$memberPoints);
+        return view('/admin/memberPointManagement')->with('memberPoints', $memberPoints);
     }
 
     //go to /admin/packageSubscriptionManagement page
@@ -94,7 +140,7 @@ class adminChangePageController extends Controller
     {
         $packages = packageSubscription::all();
 
-        return view('/admin/packageSubscriptionManagement')->with('packages',$packages);
+        return view('/admin/packageSubscriptionManagement')->with('packages', $packages);
     }
 
     //go to /admin/notificationManagement page
@@ -104,48 +150,45 @@ class adminChangePageController extends Controller
 
         //$dateformat = Carbon::parse($notifications->created_at)->format('Y-m-d');
 
-        return view('/admin/notificationManagement')->with('notifications',$notifications);
+        return view('/admin/notificationManagement')->with('notifications', $notifications);
     }
 
-     //go to /admin/editNotification page
-     public function editNotification($id)
-     {
+    //go to /admin/editNotification page
+    public function editNotification($id)
+    {
         $notifcations = notification::all()->where('id', $id);
 
+        return view('/admin/editNotification')->with('notifications', $notifcations);
+    }
 
-         return view('/admin/editNotification')->with('notifications',$notifcations);
-     }
-
-     //go to /admin/editReferral page
-     public function editReferral($id)
-     {
+    //go to /admin/editReferral page
+    public function editReferral($id)
+    {
         $referrals = referral::all()->where('id', $id);
 
-         return view('/admin/editReferral')->with('referrals',$referrals);
-     }
+        return view('/admin/editReferral')->with('referrals', $referrals);
+    }
 
-     //go to /admin/editMemberPoint page
-     public function editMemberPoint($id){
+    //go to /admin/editMemberPoint page
+    public function editMemberPoint($id)
+    {
         $memberPoints = memberPoint::all()->where('id', $id);
 
-        return view('/admin/editMemberPoint')->with('memberPoints',$memberPoints);
-
+        return view('/admin/editMemberPoint')->with('memberPoints', $memberPoints);
     }
 
     //go to /admin/editMemberLevel page
-    public function editMemberLevel($id){
-
+    public function editMemberLevel($id)
+    {
         $memberLevels = memberLevel::all()->where('id', $id);
 
-        return view('/admin/editMemberLevel')->with('memberLevels',$memberLevels);
-
+        return view('/admin/editMemberLevel')->with('memberLevels', $memberLevels);
     }
     //go to /admin/editPackageSubscription page
-    public function editPackageSubscription($id){
-
+    public function editPackageSubscription($id)
+    {
         $packages = packageSubscription::all()->where('id', $id);
 
-        return view('/admin/editPackageSubscription')->with('packages',$packages);
-
+        return view('/admin/editPackageSubscription')->with('packages', $packages);
     }
 }

@@ -174,9 +174,9 @@
                                         href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false" v-pre>Reservation</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">Today
+                                        <a class="dropdown-item" href="{{ route('viewReservationManagementDate') }}">Today
                                             reservation</a>
-                                        <a class="dropdown-item" href="">All
+                                        <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">All
                                             reservation</a>
                                     </div>
                                 </li>
@@ -243,9 +243,9 @@
                                         href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false" v-pre>Reservation</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">Today
+                                        <a class="dropdown-item" href="{{ route('viewReservationManagementDate') }}">Today
                                             reservation</a>
-                                        <a class="dropdown-item" href="">All
+                                        <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">All
                                             reservation</a>
                                     </div>
                                 </li>

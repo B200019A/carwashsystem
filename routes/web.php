@@ -96,6 +96,7 @@ Route::get('auth/google/callback', [App\Http\Controllers\Auth\GoogleController::
 //<-------user operate---------->
 //<----reservation-->
 
+Route::get('/user/selectService/', [App\Http\Controllers\user\reservationController::class, 'viewSelectService'])->name('viewSelectService');
 
 Route::get('/user/addReservation/{id}', [App\Http\Controllers\user\reservationController::class, 'viewAddReservation'])->name('viewAddReservation');
 
@@ -201,6 +202,8 @@ Route::prefix('admin')
 
         //go to reservationManagement
         Route::get('/reservationManagement', [App\Http\Controllers\admin\adminChangePageController::class, 'viewReservationManagement'])->name('viewReservationManagement');
+
+        Route::get('/reservationManagementDate', [App\Http\Controllers\admin\adminChangePageController::class, 'viewReservationManagementDate'])->name('viewReservationManagementDate');
         //go to membershipManagement
         Route::get('/membershipManagement', [App\Http\Controllers\admin\adminChangePageController::class, 'viewMembershipManagement'])->name('viewMembershipManagement');
         //go to voucherManagement
