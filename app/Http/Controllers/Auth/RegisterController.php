@@ -79,6 +79,7 @@ class RegisterController extends Controller
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'role' => $data['role'],
+                'google_id'=> 'null',
             ]);
 
             //if is user need genrate the invite code
@@ -109,6 +110,7 @@ class RegisterController extends Controller
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'role' => $data['role'],
+                'google_id'=> 'null',
             ]);
 
             return $user;

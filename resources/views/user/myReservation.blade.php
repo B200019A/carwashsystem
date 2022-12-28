@@ -5,7 +5,7 @@
 
 
 
-    <link rel="stylesheet" type="text/css" href="../css/Table/font-awesome.min.css">
+   <!-- <link rel="stylesheet" type="text/css" href="../css/Table/font-awesome.min.css">
 
     <link rel="stylesheet" type="text/css" href="../css/Table/animate.css">
 
@@ -13,15 +13,19 @@
 
     <link rel="stylesheet" type="text/css" href="../css/Table/perfect-scrollbar.css">
 
-    <link rel="stylesheet" type="text/css" href="../css/Table/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/Table/util.css">-->
     <link rel="stylesheet" type="text/css" href="../css/Table/main.css">
     <style>
+        body{
+                 background-color:#f5f9ff;
+        }
         #body {
             margin-top: 2%;
             margin-bottom: 2%;
             margin-left: 5%;
             margin-right: 5%;
             text-align: center;
+
         }
 
         @media screen and (max-width: 400px) {

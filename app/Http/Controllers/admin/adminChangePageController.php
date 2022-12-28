@@ -55,7 +55,7 @@ class adminChangePageController extends Controller
             ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
             ->leftjoin('branches','branches.id','=','reservations.branchId')
             ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus','branches.name as branchName')
-            ->paginate(10);
+            ->get();
 
         return view('/admin/reservationManagement')->with('viewReservations', $viewReservations);
     }

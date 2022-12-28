@@ -1,87 +1,79 @@
 @extends('layouts.app')
 @section('content')
-    <div style="margin-top:10px; margin-bottom:10px">
-        <div class="row">
-            <div class="col-sm-2"></div>
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-title"style="margin-left:20px; color:green;">
-                        <h4>Your current package:</h4>
-                    </div>
-                    <div style="margin-left:20px; margin-right:20px;  ">
-                    @foreach ($userPackages as $userPackage)
-                        
-                            @if ($userPackage->paymentStatus == 0)
-                                <!--adjust margin strat-->
-                                <!---card--->
-                                <div class="row">
-                                    <div class="col-sm-4" style="margin-top:10px">
-                                        <div class="card h-100">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ $userPackage->packageName }}</h5>
-                                                <a href=""><img src="{{ asset('images/carwash.jpeg') }}"
-                                                        alt="" width="100" class="img-fluid"><a>
+    <link rel="stylesheet" type="text/css" href="../css/Layout/selectService_CarWashPackage.css">
 
-                                                        <div class="card-heading"><a href="">Left: --<a></div>
-                                                        <div class="card-heading"><a
-                                                                href="{{ route('repaymentPackage', ['id' => $userPackage->id]) }}"
-                                                                class="btn btn-warning btn-xs">Payment</a></div>
-                                            </div>
+    <div class="container">
+        <h1 style="margin-top:2%; text-align:center;">Your Current Package<h1>
+                <ul class="cards">
+                    @foreach ($userPackages as $userPackage)
+                        @if ($userPackage->paymentStatus == 1)
+                            @if ($userPackage->times >= 1)
+                                <li class="cards__item_package">
+                                    <div class="card">
+                                        <div class="card__image"
+                                            style="background-image: url({{ asset('images/carwash.jpeg') }});">
+                                        </div>
+                                        <div class="card__content">
+                                            <div class="card__title">{{ $userPackage->packageName }}</div>
+                                            <p class="card__text">Left: {{ $userPackage->times }}
+                                                <!-- <br> it's safe to clean
+                                                                your engine bay and we recommend it from time to time in order to keep it
+                                                                clean, just like you do with the rest of the car.-->
+
+                                            </p>
+                                            <a style="text-decoration: none;" href=""><button
+                                                    class="btn btn--block">View</button></a>
                                         </div>
                                     </div>
-                                    <!---card end--->
-                                @else
-                                        <!---card--->
-                                        <div class="row">
-                                            <div class="col-sm-4" style="margin-top:10px">
-                                                <div class="card h-100">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">{{ $userPackage->packageName }}</h5>
-                                                        <a href=""><img src="{{ asset('images/carwash.jpeg') }}"
-                                                                alt="" width="100" class="img-fluid"><a>
-
-                                                                <div class="card-heading"><a >Left:
-                                                                        {{ $userPackage->times }}<a>
-                                                                </div>
-                                                                <div class="card-heading"><a
-                                                                        href="{{ route('viewAddReservation_package', ['id' => $userPackage->id]) }}"
-                                                                        class="btn btn-danger btn-xs">add reservation<a>
-                                                                </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                             <!---card end--->
+                                </li>
                             @endif
-                    @endforeach
-                    </div>
-                    &nbsp;
-                    <div class="card-title"style="margin-left:20px; color:green;">
-                        <h4>Available Package</h4>
-                    </div>
-                    @foreach ($packages as $package)
-                        <div class="row">
-                            <!--card start-->
-                            <div class="col-sm-4" style="margin-top:10px">
-                                <div class="card h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $package->name }}</h5>
-                                        <a href=""><img src="{{ asset('images/carwash.jpeg') }}" alt=""
-                                                width="100" class="img-fluid"><a>
-                                                <p>{{ $package->description }}<p>
-                                                    <div class="card-heading">RM {{ $package->price }}<a
-                                                            href="{{ route('addNewPackage', $package->id) }}"><button
-                                                                type="submit" style="float:right;"
-                                                                class="btn btn-danger btn-xs">Buy</button><a></div>
-                                                    <div class="card-heading"><a href=""><a></div>
+                        @else
+                            <li class="cards__item_package">
+                                <div class="card">
+                                    <div class="card__image"
+                                        style="background-image: url({{ asset('images/carwash.jpeg') }});">
+                                    </div>
+                                    <div class="card__content">
+                                        <div class="card__title">{{ $userPackage->packageName }}</div>
+                                        <p class="card__text">Left: {{ $userPackage->times }}
+                                            <!-- <br> it's safe to clean
+                                                                your engine bay and we recommend it from time to time in order to keep it
+                                                                clean, just like you do with the rest of the car.-->
+
+                                        </p>
+                                        <a style="text-decoration: none;" href="{{ route('repaymentPackage', ['id' => $userPackage->id]) }}"><button
+                                                class="btn btn--block">Payment</button></a>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <!--card end-->
+                            </li>
+                        @endif
                     @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
+
+                </ul>
+
+                <h1 style="text-align:center;">Available Package<h1>
+                         <ul class="cards">
+                        @foreach ($packages as $package)
+                            <li class="cards__item_package">
+                                <div class="card">
+                                    <div class="card__image"
+                                        style="background-image: url({{ asset('images/carwash.jpeg') }});">
+                                    </div>
+                                    <div class="card__content">
+                                        <div class="card__title">{{ $package->name }}</div>
+                                        <p class="card__text">RM {{ $package->price }}
+                                            <!-- <br> it's safe to clean
+                                                                your engine bay and we recommend it from time to time in order to keep it
+                                                                clean, just like you do with the rest of the car.-->
+
+                                        </p>
+                                        <a style="text-decoration: none;" href="{{ route('addNewPackage', $package->id) }}"><button
+                                                class="btn btn--block">Buy</button></a>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+
+                        </ul>
     </div>
 @endsection

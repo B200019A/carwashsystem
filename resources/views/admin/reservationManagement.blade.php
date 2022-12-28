@@ -60,6 +60,10 @@
                 </div>
             </div>
             <br><br>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input class="form-control" type="date" id="date" name="date" max="" min="">
+            </div>
 
             <table class="table table-bordered" id="myTable">
                 <thead>
@@ -201,11 +205,11 @@
 
         </div>
     </div>
-        <div class="row">
+    <div class="row">
         <div class="">
-                {{ $viewReservations->links() }}
+
         </div>
-        </div>
+    </div>
 
     <script>
         function searchFunction() {

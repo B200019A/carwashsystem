@@ -89,10 +89,13 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+//google register
+Route::get('auth/google', [App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback']);
+//google register end
 //<-------user operate---------->
 //<----reservation-->
 
-Route::get('/user/selectService', [App\Http\Controllers\user\reservationController::class, 'viewSelectService'])->name('viewSelectService');
 
 Route::get('/user/addReservation/{id}', [App\Http\Controllers\user\reservationController::class, 'viewAddReservation'])->name('viewAddReservation');
 
