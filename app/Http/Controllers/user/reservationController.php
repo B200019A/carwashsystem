@@ -93,69 +93,88 @@ class reservationController extends Controller
                     ->with('branchs', $branchs)
                     ->with('services', $services);
             } else {
-                // add new reservation to database
-                $addNewReservation = reservation::create([
-                    'userId' => Auth::id(),
-                    'branchId' => $r->branch,
-                    'carPlate' => $r->carPlate,
-                    'Services' => $serviceName,
-                    'timeSlot' => $r->timeSlot,
-                    'price' => $price,
-                    'date' => $r->date,
-                    'orderId' => '',
-                    'status' => 'upcoming',
-                ]);
-                //get the reservation id
-                //can diect get addNewReservation;
-                $reservationId = DB::table('reservations')
-                    ->where('userId', '=', Auth::id())
-                    ->orderBy('created_at', 'DESC')
-                    ->first();
-
-                $reservationNumber = $reservationId->id;
-                $reservationPrice = $reservationId->price;
-                //select the multiple member point and then do the calculate
-                $multipleNumber = memberPoint::find(1);
-                $totalGetMemberPoint = $reservationPrice * $multipleNumber->multiple;
-
-                //add new order to database
-                $addNewOrder = OrderReservation::create([
-                    'reservationId' => $reservationNumber,
-                    'userId' => Auth::id(),
-                    'paymentStatus' => 0, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
-                    'amount' => $reservationPrice,
-                    'memberPoint' => $totalGetMemberPoint,
-                    'orderPackageId' => '0',
-                ]);
-
-                //get the order id
-                $orderId = DB::table('order_reservations')
-                    ->where('userId', '=', Auth::id())
-                    ->orderBy('created_at', 'DESC')
-                    ->first();
-
-                $orderNumber = $orderId->id;
-                //update new reservation to the order id
-                DB::update('update reservations set orderID = ? where id = ?', [$orderNumber, $reservationNumber]);
-
-                //get reservation data to the payement reservation
-                $reservation = DB::table('reservations')
-                    ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
-                    ->select('branches.name as branchName', 'reservations.*')
-                    ->where('reservations.orderId', '=', $orderNumber)
+                $findSameTimeSlot1 = reservation::where([['date', '=', $r->date], ['Services', '=', 'Normal wash'], ['branchId', '=', $r->branch], ['timeSlot', '=', $r->timeSlot]])
+                    ->whereNot('status', '=', 'cancel')
                     ->get();
 
-                //find member point for the user
-                $userMemberPoint = userMemberPoint::where('userId', '=', Auth::id())->first();
-                $memberLevel = $userMemberPoint->memberLevel;
-                //find the discount in target member level
-                $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
+                $TimeSlotCount = $findSameTimeSlot1->count();
+                if ($TimeSlotCount > 3) {
+                    //if over 20 cannot booking success
+                    Session::flash('Danger', 'Time already full, please change to another time!');
 
-                // $users = User::with(['stateoffice','cityoffice','hometownoffice'])->get();
-                $r->session()->forget('Danger');
-                $r->session()->forget('Success');
+                    //select all branch data
+                    $branchs = branch::whereNot('status', '=', 'close')->get();
 
-                return view('/user/paymentReservation', compact('reservation', 'memberLevelDiscount'));
+                    $services = service::find($r->serviceType);
+
+                    return view('/user/addReservation')
+                        ->with('branchs', $branchs)
+                        ->with('services', $services);
+                } else {
+                    // add new reservation to database
+                    $addNewReservation = reservation::create([
+                        'userId' => Auth::id(),
+                        'branchId' => $r->branch,
+                        'carPlate' => $r->carPlate,
+                        'Services' => $serviceName,
+                        'timeSlot' => $r->timeSlot,
+                        'price' => $price,
+                        'date' => $r->date,
+                        'orderId' => '',
+                        'status' => 'upcoming',
+                    ]);
+                    //get the reservation id
+                    //can diect get addNewReservation;
+                    $reservationId = DB::table('reservations')
+                        ->where('userId', '=', Auth::id())
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
+
+                    $reservationNumber = $reservationId->id;
+                    $reservationPrice = $reservationId->price;
+                    //select the multiple member point and then do the calculate
+                    $multipleNumber = memberPoint::find(1);
+                    $totalGetMemberPoint = $reservationPrice * $multipleNumber->multiple;
+
+                    //add new order to database
+                    $addNewOrder = OrderReservation::create([
+                        'reservationId' => $reservationNumber,
+                        'userId' => Auth::id(),
+                        'paymentStatus' => 0, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
+                        'amount' => $reservationPrice,
+                        'memberPoint' => $totalGetMemberPoint,
+                        'orderPackageId' => '0',
+                    ]);
+
+                    //get the order id
+                    $orderId = DB::table('order_reservations')
+                        ->where('userId', '=', Auth::id())
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
+
+                    $orderNumber = $orderId->id;
+                    //update new reservation to the order id
+                    DB::update('update reservations set orderID = ? where id = ?', [$orderNumber, $reservationNumber]);
+
+                    //get reservation data to the payement reservation
+                    $reservation = DB::table('reservations')
+                        ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
+                        ->select('branches.name as branchName', 'reservations.*')
+                        ->where('reservations.orderId', '=', $orderNumber)
+                        ->get();
+
+                    //find member point for the user
+                    $userMemberPoint = userMemberPoint::where('userId', '=', Auth::id())->first();
+                    $memberLevel = $userMemberPoint->memberLevel;
+                    //find the discount in target member level
+                    $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
+
+                    // $users = User::with(['stateoffice','cityoffice','hometownoffice'])->get();
+                    $r->session()->forget('Danger');
+                    $r->session()->forget('Success');
+
+                    return view('/user/paymentReservation', compact('reservation', 'memberLevelDiscount'));
+                }
             }
             //if select other service
         } else {
@@ -333,7 +352,7 @@ class reservationController extends Controller
     {
         //if select normal wash
         $r = request();
-        $carService = $r->serviceType;
+        $carService = $r->serviceName;
 
         if ($carService == 'Normal wash') {
             $date = $r->date; //get the date
@@ -343,7 +362,6 @@ class reservationController extends Controller
                 ->get();
             //echo $ServiceCount;
             $ServiceCount = $findSameDate1->count(); //calculate the normal wash in that time
-
             if ($ServiceCount > 19) {
                 //if over 20 cannot booking success
                 Session::flash('Danger', 'Booking already full!');
@@ -351,21 +369,46 @@ class reservationController extends Controller
                 $id = $r->reservationId;
                 $reservation = reservation::all()->where('id', $id);
 
-                return view('/user/editReservation')->with('reservation', $reservation);
+                //get branch from the database
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                return view('/user/editReservation')
+                    ->with('reservation', $reservation)
+                    ->with('branchs', $branchs);
             } else {
-                // update exist reservation to database
-                $reservation = reservation::find($r->reservationId);
+                $findSameTimeSlot1 = reservation::where([['date', '=', $r->date], ['Services', '=', 'Normal wash'], ['branchId', '=', $r->branch], ['timeSlot', '=', $r->timeSlot]])
+                    ->whereNot('status', '=', 'cancel')
+                    ->get();
 
-                $reservation->carPlate = $r->carPlate;
-                $reservation->date = $r->date;
-                $reservation->timeSlot = $r->timeSlot;
-                $reservation->branchId = $r->branch;
-                $reservation->save();
+                $TimeSlotCount = $findSameTimeSlot1->count();
+                if ($TimeSlotCount > 3) {
+                    //if over 4 for the timeslot cannot booking success
+                Session::flash('Danger', 'Time already full, please change to another time!');
+                //back to edit reservsation page
+                $id = $r->reservationId;
+                $reservation = reservation::all()->where('id', $id);
 
-                Session::flash('Success', 'Upadate reservation successful!');
-                return redirect()->route('viewMyReservation');
+                //get branch from the database
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                return view('/user/editReservation')
+                    ->with('reservation', $reservation)
+                    ->with('branchs', $branchs);
+
+                } else {
+                      // update exist reservation to database
+                      $reservation = reservation::find($r->reservationId);
+
+                      $reservation->carPlate = $r->carPlate;
+                      $reservation->date = $r->date;
+                      $reservation->timeSlot = $r->timeSlot;
+                      $reservation->branchId = $r->branch;
+                      $reservation->save();
+
+                      Session::flash('UpdateReservationSuccess', 'Upadate reservation successful!');
+                      return redirect()->route('viewMyReservation');
+                }
             }
-            //if select other service
         } else {
             $date = $r->date; //get the date
             $branch = $r->branch; //get the branch id
@@ -377,9 +420,17 @@ class reservationController extends Controller
             if ($ServiceCount > 4) {
                 //if over 5 cannot booking success
                 Session::flash('Danger', 'Booking already full!');
-                //back to edit reservsation page
+                                //back to edit reservsation page
+
                 $id = $r->reservationId;
                 $reservation = reservation::all()->where('id', $id);
+
+                //get branch from the database
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                return view('/user/editReservation')
+                    ->with('reservation', $reservation)
+                    ->with('branchs', $branchs);
 
                 return view('/user/editReservation')->with('reservation', $reservation);
             } else {
@@ -392,7 +443,7 @@ class reservationController extends Controller
                 $reservation->branchId = $r->branch;
                 $reservation->save();
 
-                Session::flash('Success', 'Upadate reservation successful!');
+                Session::flash('UpdateReservationSuccess', 'Upadate reservation successful!');
                 return redirect()->route('viewMyReservation');
             }
         }
@@ -416,7 +467,6 @@ class reservationController extends Controller
             echo 'true';
             Session::flash('Danger', 'You only can cancel the reservation 7 days before the reservation date!!');
             return redirect()->route('viewMyReservation');
-
         } else {
             $findOrderReservation = OrderReservation::where('reservationId', $id)->first();
             if ($findOrderReservation->paymentStatus == 1) {
@@ -486,90 +536,114 @@ class reservationController extends Controller
                 //if over 20 cannot booking success
                 Session::flash('Danger', 'Booking already full!');
 
-                return view('user/addReservation');
+                //select all branch data
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                $id = $r->userPackageId;
+                return view('/user/addReservation_package')
+                    ->with('branchs', $branchs)
+                    ->with('userPackageId', $id);
             } else {
-                // add new reservation to database
-                $addNewReservation = reservation::create([
-                    'userId' => Auth::id(),
-                    'branchId' => $r->branch,
-                    'carPlate' => $r->carPlate,
-                    'Services' => $serviceName,
-                    'timeSlot' => $r->timeSlot,
-                    'price' => $price,
-                    'date' => $r->date,
-                    'orderId' => '',
-                    'status' => 'upcoming',
-                ]);
-                //get the reservation id
-                $reservationId = DB::table('reservations')
-                    ->where('userId', '=', Auth::id())
-                    ->orderBy('created_at', 'DESC')
-                    ->first();
+                $findSameTimeSlot1 = reservation::where([['date', '=', $r->date], ['Services', '=', 'Normal wash'], ['branchId', '=', $r->branch], ['timeSlot', '=', $r->timeSlot]])
+                    ->whereNot('status', '=', 'cancel')
+                    ->get();
 
-                $reservationNumber = $reservationId->id;
-                $reservationPrice = $reservationId->price;
-                //select the multiple member point and then do the calculate
-                $multipleNumber = memberPoint::find(1);
-                $totalGetMemberPoint = $reservationPrice * $multipleNumber->multiple;
+                $TimeSlotCount = $findSameTimeSlot1->count();
+                if ($TimeSlotCount > 3) {
+                    //if over 20 cannot booking success
+                    Session::flash('Danger', 'Time already full, please change to another time!');
 
-                //add new order to database
-                $addNewOrder = OrderReservation::create([
-                    'reservationId' => $reservationNumber,
-                    'userId' => Auth::id(),
-                    'paymentStatus' => 4, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success 4 is package order reservation)
-                    'amount' => $reservationPrice,
-                    'memberPoint' => $totalGetMemberPoint,
-                    'orderPackageId' => $r->orderPackageId,
-                ]);
+                    //select all branch data
+                    $branchs = branch::whereNot('status', '=', 'close')->get();
 
-                //get the order id
-                $orderId = DB::table('order_reservations')
-                    ->where('userId', '=', Auth::id())
-                    ->orderBy('created_at', 'DESC')
-                    ->first();
+                    $id = $r->userPackageId;
+                    return view('/user/addReservation_package')
+                        ->with('branchs', $branchs)
+                        ->with('userPackageId', $id);
+                } else {
+                    // add new reservation to database
+                    $addNewReservation = reservation::create([
+                        'userId' => Auth::id(),
+                        'branchId' => $r->branch,
+                        'carPlate' => $r->carPlate,
+                        'Services' => $serviceName,
+                        'timeSlot' => $r->timeSlot,
+                        'price' => $price,
+                        'date' => $r->date,
+                        'orderId' => '',
+                        'status' => 'upcoming',
+                    ]);
+                    //get the reservation id
+                    $reservationId = DB::table('reservations')
+                        ->where('userId', '=', Auth::id())
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
 
-                $orderNumber = $orderId->id;
-                //update new reservation to the order id
-                DB::update('update reservations set orderID = ? where id = ?', [$orderNumber, $reservationNumber]);
+                    $reservationNumber = $reservationId->id;
+                    $reservationPrice = $reservationId->price;
+                    //select the multiple member point and then do the calculate
+                    $multipleNumber = memberPoint::find(1);
+                    $totalGetMemberPoint = $reservationPrice * $multipleNumber->multiple;
 
-                //<---calculate the member point--->
-                //price change to memberpoint
-                $memberpoint = $reservationPrice;
-                //get the multiple value in database
-                $multipleNumber = memberPoint::find(1);
-                //calculate the total member point
-                $totalGetMemberPoint = $memberpoint * $multipleNumber->multiple;
+                    //add new order to database
+                    $addNewOrder = OrderReservation::create([
+                        'reservationId' => $reservationNumber,
+                        'userId' => Auth::id(),
+                        'paymentStatus' => 4, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success 4 is package order reservation)
+                        'amount' => $reservationPrice,
+                        'memberPoint' => $totalGetMemberPoint,
+                        'orderPackageId' => $r->orderPackageId,
+                    ]);
 
-                //find the usermemberpoitn information
-                $userMemberPoint = userMemberPoint::where('userId', Auth::id())->first();
+                    //get the order id
+                    $orderId = DB::table('order_reservations')
+                        ->where('userId', '=', Auth::id())
+                        ->orderBy('created_at', 'DESC')
+                        ->first();
 
-                //$totalMemberPoint = userMemberPoint::select('totalPoint')->where('userId','=',)->first();
-                //total member point plus this payment total get member point
-                $plusTotalMemberPoint = $userMemberPoint->totalPoint + $totalGetMemberPoint;
-                //current member point plus this payment total get member point
-                $plusCurrentMemberpoint = $userMemberPoint->currentPoint + $totalGetMemberPoint;
+                    $orderNumber = $orderId->id;
+                    //update new reservation to the order id
+                    DB::update('update reservations set orderID = ? where id = ?', [$orderNumber, $reservationNumber]);
 
-                //update to the database new member point
-                $userMemberPoint->totalPoint = $plusTotalMemberPoint;
-                $userMemberPoint->currentPoint = $plusCurrentMemberpoint;
-                $userMemberPoint->save();
-                //<---calculate the member point end--->
+                    //<---calculate the member point--->
+                    //price change to memberpoint
+                    $memberpoint = $reservationPrice;
+                    //get the multiple value in database
+                    $multipleNumber = memberPoint::find(1);
+                    //calculate the total member point
+                    $totalGetMemberPoint = $memberpoint * $multipleNumber->multiple;
 
-                //<--minus the package wash times-->
-                //get the user order package id
-                $orderPackageId = $r->orderPackageId;
+                    //find the usermemberpoitn information
+                    $userMemberPoint = userMemberPoint::where('userId', Auth::id())->first();
 
-                $userOrderPackage = userPackageSubscription::where('id', $orderPackageId)->first();
+                    //$totalMemberPoint = userMemberPoint::select('totalPoint')->where('userId','=',)->first();
+                    //total member point plus this payment total get member point
+                    $plusTotalMemberPoint = $userMemberPoint->totalPoint + $totalGetMemberPoint;
+                    //current member point plus this payment total get member point
+                    $plusCurrentMemberpoint = $userMemberPoint->currentPoint + $totalGetMemberPoint;
 
-                $MinusWashTimes = $userOrderPackage->times - 1;
+                    //update to the database new member point
+                    $userMemberPoint->totalPoint = $plusTotalMemberPoint;
+                    $userMemberPoint->currentPoint = $plusCurrentMemberpoint;
+                    $userMemberPoint->save();
+                    //<---calculate the member point end--->
 
-                $userOrderPackage->times = $MinusWashTimes;
-                $userOrderPackage->save();
+                    //<--minus the package wash times-->
+                    //get the user order package id
+                    $orderPackageId = $r->orderPackageId;
 
-                Session::flash('Success', 'Add Reservatuon By Package Successful!');
+                    $userOrderPackage = userPackageSubscription::where('id', $orderPackageId)->first();
 
-                //<--minus the package wash times end-->
-                return redirect()->route('viewMyReservation');
+                    $MinusWashTimes = $userOrderPackage->times - 1;
+
+                    $userOrderPackage->times = $MinusWashTimes;
+                    $userOrderPackage->save();
+
+                    Session::flash('Success', 'Add Reservatuon By Package Successful!');
+
+                    //<--minus the package wash times end-->
+                    return redirect()->route('viewMyReservation');
+                }
             }
             //if select other service
         }
