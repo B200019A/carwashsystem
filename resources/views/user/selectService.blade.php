@@ -24,7 +24,7 @@
                     @endforeach
                 </ul>
 
-                <h1 style="text-align:center;">Select Pakcage<h1>
+                <h1 style="text-align:center;">Select Package<h1>
                         <ul class="cards">
                             @foreach ($userPackages as $userPackage)
                                 @if ($userPackage->paymentStatus == 1)

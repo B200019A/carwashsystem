@@ -25,7 +25,7 @@ class DeactivateUserMiddleware
 
             return redirect()
                 ->route('login')
-                ->with('loginError', 'Your Account is suspended, please contact Admin.');
+                ->with('loginError', 'Your Account is suspended, please contact Admin 0123456789 !');
         }
         return $next($request);
     }

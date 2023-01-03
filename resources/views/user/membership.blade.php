@@ -77,7 +77,7 @@
             @else
                 <div class="columns">
                     <ul class="price">
-                        <li class="header">New</li>
+                        <li class="header" style="background-color:#3f3b4b;">New</li>
                         <li class="grey">Target Point: 0</li>
                         <li>Current Mmeber Point: --</li>
                         <li>Benefit: no discount</li>
@@ -101,7 +101,7 @@
             @else
                 <div class="columns">
                     <ul class="price">
-                        <li class="header">Silver</li>
+                        <li class="header" style="background-color:#3f3b4b;">Silver</li>
                         <li class="grey">Target Point: 1500</li>
                         <li>Current Mmeber Point: --</li>
                         <li>Benefit: 5% discount</li>
@@ -126,7 +126,7 @@
             @else
                 <div class="columns">
                     <ul class="price">
-                        <li class="header">Gold</li>
+                        <li class="header" style="background-color:#3f3b4b;">Gold</li>
                         <li class="grey">Target Point: 3000</li>
                         <li>Current Mmeber Point: --</li>
                         <li>Benefit: 10% discount</li>
@@ -150,7 +150,7 @@
             @else
                 <div class="columns">
                     <ul class="price">
-                        <li class="header">Platinum</li>
+                        <li class="header" style="background-color:#3f3b4b;">Platinum</li>
                         <li class="grey">Target Point: 4500</li>
                         <li>Current Mmeber Point: --</li>
                         <li>Benefit: 15% discount</li>

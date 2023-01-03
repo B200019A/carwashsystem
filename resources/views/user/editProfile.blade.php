@@ -61,18 +61,20 @@
                 <br><br>
                 <h3 style="text-align:center;">You Profile</h3>
                 <div id="form-content">
-
+                    <form action="{{ route('profileUpdate') }}" method="POST" enctype="multipart/form-data">
+                        @CSRF
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input class="form-control" type="text" id="name" name="name" value="{{ Auth::user()->name}}" readonly>
+                            <input class="form-control" type="text" id="name" name="name" value="{{ Auth::user()->name}}" >
                         </div>
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input class="form-control" type="text" id="email" name="email" value="{{ Auth::user()->email}}" readonly>
+                            <input class="form-control" type="text" id="email" name="email" value="{{ Auth::user()->email}}" >
                         </div>
                         <div style=" text-align: center; padding-top: 15px !important;">
-                        <a href="{{ route('editProfile')}}"><button type="submit" class="btn ">Edit</button></a>
+                        <button type="submit" class="btn ">Update</button>
                         </div>
+                    </form>
                 </div>
                 <br><br>
             </div>

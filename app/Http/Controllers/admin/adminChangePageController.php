@@ -51,11 +51,11 @@ class adminChangePageController extends Controller
                 DB::update('update reservations set status = ? where id = ?', ['expired', $reservationId]);
             }
         }
-        $viewReservations = DB::table('reservations')
-            ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
+        $viewReservations = DB::table('order_reservations')
+            ->leftjoin('reservations', 'reservations.id', '=', 'order_reservations.reservationId')
             ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
-            ->select('order_reservations.id as orderId', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
-            ->get();
+            ->select('order_reservations.id as orderId', 'order_reservations.amount as totalAmount', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
+            ->paginate(10);
 
         return view('/admin/reservationManagement')->with('viewReservations', $viewReservations);
     }
@@ -91,17 +91,20 @@ class adminChangePageController extends Controller
                 DB::update('update reservations set status = ? where id = ?', ['expired', $reservationId]);
             }
         }
-        $viewReservations = DB::table('reservations')
-            ->leftjoin('order_reservations', 'order_reservations.id', '=', 'reservations.id')
+
+        $viewReservations = DB::table('order_reservations')
+            ->leftjoin('reservations', 'reservations.id', '=', 'order_reservations.reservationId')
             ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
             ->select('order_reservations.id as orderId', 'order_reservations.amount as totalAmount', 'reservations.*', 'order_reservations.paymentStatus as paymentStatus', 'branches.name as branchName')
-            ->where('reservations.date','=',$currentDate)
+            ->where('reservations.date', '=', $currentDate)
+            ->where('reservations.branchId', '=', '3')
             ->get();
 
-        $branches = branch::where('status','=','exist')->get();
+        $branches = branch::where('status', '=', 'exist')->get();
 
-        //echo($viewReservations);
-        return view('/admin/reservationManagementDate')->with('allReservation', $viewReservations)->with('branches',$branches);
+        return view('/admin/reservationManagementDate')
+            ->with('allReservation', $viewReservations)
+            ->with('branches', $branches);
     }
 
     //go to /admin/membershipManagement page

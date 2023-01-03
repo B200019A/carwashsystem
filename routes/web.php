@@ -89,6 +89,16 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+//<------Profile------->
+//udpate profile
+Route::post('/user/myProfile', [App\Http\Controllers\user\profileController::class, 'profileUpdate'])->name('profileUpdate');
+Route::get('/user/myProfile', [App\Http\Controllers\user\profileController::class, 'myProfile'])->name('myProfile');
+Route::get('/user/editProfile', [App\Http\Controllers\user\profileController::class, 'editProfile'])->name('editProfile');
+
+Route::get('/user/changePassword', [App\Http\Controllers\user\profileController::class, 'changePassword'])->name('changePassword');
+Route::post('/user/updatePassword', [App\Http\Controllers\user\profileController::class, 'updatePassword'])->name('updatePassword');
+//<------Profile end------->
+
 //google register
 Route::get('auth/google', [App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback']);
@@ -120,8 +130,6 @@ Route::get('/user/notification', [App\Http\Controllers\user\NotificationControll
 Route::get('/user/reward', [App\Http\Controllers\user\rewardController::class, 'reward'])->name('reward');
 
 Route::get('/user/membership', [App\Http\Controllers\user\rewardController::class, 'membership'])->name('membership');
-
-Route::get('/user/myProfile', [App\Http\Controllers\user\profileController::class, 'myProfile'])->name('myProfile');
 
 Route::get('/user/helpCentre', [App\Http\Controllers\user\helpCentreController::class, 'helpCentre'])->name('helpCentre');
 
@@ -232,6 +240,11 @@ Route::prefix('admin')
         Route::get('/SortBranchReservationManagement', [App\Http\Controllers\admin\reservationManagementController::class, 'sortReservationBranch'])->name('sortReservationBranch');
         //sort Status
         Route::get('/SortStatusReservationManagement', [App\Http\Controllers\admin\reservationManagementController::class, 'sortReservationStatus'])->name('sortReservationStatus');
+
+        Route::post('/searchReservation', [App\Http\Controllers\admin\reservationManagementController::class, 'searchReservation'])->name('searchReservation');
+
+        //find branch reservation
+        Route::get('/findBranchReservationManagementDate/{id}', [App\Http\Controllers\admin\reservationManagementController::class, 'findBranchreservation'])->name('findBranchreservation');
         //<----reservation management end -->
 
         //<----notifcation management-->

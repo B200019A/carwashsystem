@@ -3,7 +3,7 @@
     <link rel="stylesheet" type="text/css" href="../css/Layout/selectService_CarWashPackage.css">
 
     <div class="container">
-        <h1 style="margin-top:2%; text-align:center;">Your Current Package<h1>
+        <h1 style="margin-top:2%; text-align:center;">Purchase Package<h1>
                 <ul class="cards">
                     @foreach ($userPackages as $userPackage)
                         @if ($userPackage->paymentStatus == 1)
@@ -62,9 +62,7 @@
                                     <div class="card__content">
                                         <div class="card__title">{{ $package->name }}</div>
                                         <p class="card__text">RM {{ $package->price }}
-                                            <!-- <br> it's safe to clean
-                                                                your engine bay and we recommend it from time to time in order to keep it
-                                                                clean, just like you do with the rest of the car.-->
+                                             <br>Description: {{$package->description}}
 
                                         </p>
                                         <a style="text-decoration: none;" href="{{ route('addNewPackage', $package->id) }}"><button

@@ -364,6 +364,7 @@
 
             <!-- Contact Section -->
             <div class="w3-container w3-light-grey" style="padding:128px 16px" id="contact">
+                <div style="text-align:center;">
                 <h3 class="w3-center">CONTACT</h3>
                 <p class="w3-center w3-large">Lets get in touch. Send us a message:</p>
                 <div style="margin-top:48px">
@@ -372,11 +373,11 @@
                     <p><i class="fa fa-envelope fa-fw w3-xxlarge w3-margin-right"> </i> Email: jj@gmail.com</p>
                     <br>
                     <form name="myForm" action="https://getform.io/f/7c97ab5f-af18-4676-8f19-0f5a432fea27" enctype="multipart/form-data" method="post">
-                        <p><input style="border-radius:15px;" class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+                        <p><input style="border-radius:15px; display: inline-block !important;" class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
                         </p>
                         <p><input style="border-radius:15px;"  class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
                         </p>
-                        <p><input style="border-radius:15px;"  class="w3-input w3-border" type="text" placeholder="Subject" required
+                        <p><input style="border-radius:15px; width:800px height:15%;"  class="w3-input w3-border" type="text" placeholder="Subject" required
                                 name="Subject"></p>
                         <p><input style="border-radius:15px;"  class="w3-input w3-border" type="text" placeholder="Message" required
                                 name="Message"></p>
@@ -387,6 +388,7 @@
                         </p>
                     </form>
                     <!-- Image of location/map -->
+                </div>
                 </div>
             </div>
 

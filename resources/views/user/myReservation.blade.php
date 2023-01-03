@@ -3,17 +3,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-
-
-   <!-- <link rel="stylesheet" type="text/css" href="../css/Table/font-awesome.min.css">
-
-    <link rel="stylesheet" type="text/css" href="../css/Table/animate.css">
-
-    <link rel="stylesheet" type="text/css" href="../css/Table/select2.min.css">
-
-    <link rel="stylesheet" type="text/css" href="../css/Table/perfect-scrollbar.css">
-
-    <link rel="stylesheet" type="text/css" href="../css/Table/util.css">-->
     <link rel="stylesheet" type="text/css" href="../css/Table/main.css">
     <style>
         body{

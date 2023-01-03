@@ -4,11 +4,11 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
             <br><br>
-            <table class="table table-bordered">
+            <table class="table table-bordered"  id="myTable">
                 <thead>
                     <tr>
                         <th>User id</th>
-                        <td>Name</th>
+                        <th>Name</th>
                         <th>Email</th>
                         <th>Operates</th>
                     </tr>
@@ -45,4 +45,26 @@
         </div>
         <div class="col-sm-3"></div>
     </div>
+    <script>
+        function searchFunction() {
+
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("keyword");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+
+        }
+    </script>
 @endsection

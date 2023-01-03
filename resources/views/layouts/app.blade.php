@@ -51,27 +51,20 @@
         {{ Session::get('loginError') }}
     </div>
 @endif
-@if (Session::has('FindFailedInviteCode'))
-    <div class="alert alert-danger" role="alert">
-        {{ Session::get('deleteSuccess') }}
-    </div>
-@endif
-@if (Session::has('FindSuccessInviteCode'))
-    <div class="alert alert-success" role="alert">
-        {{ Session::get('FindSuccessInviteCode') }}
+
+@if (Session::has('Success'))
+    <div class="alert alert-success" style="margin-bottom:-4px !important" role="alert">
+        {{ Session::get('Success') }}
     </div>
 @endif
 
-@if (Session::has('NormalWashOverBooking'))
-    <div class="alert alert-success" role="alert">
-        {{ Session::get('NormalWashOverBooking') }}
+@if (Session::has('Danger'))
+    <div class="alert alert-danger" style="margin-bottom:-4px !important" role="alert">
+        {{ Session::get('Danger') }}
     </div>
 @endif
-@if (Session::has('UpdateReservationSuccess'))
-    <div class="alert alert-success" style="margin-bottom:-12px !important" role="alert">
-        {{ Session::get('UpdateReservationSuccess') }}
-    </div>
-@endif
+
+
 <style>
     .nav-link-modify {
         font-size: 15px !important;
@@ -113,12 +106,12 @@
                             @if (Route::has('register'))
                                 <li class="nav-item">
                                     <!--<a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Register Type</a>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">-->
+                                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">-->
                                     <a class="nav-link nav-link-modify"
                                         href="{{ route('register') }}">{{ __('Register') }}</a>
                                     <!--<a class="dropdown-item" href="{{ route('registerWithInv') }}">{{ __('Register With Inv') }}</a>
-                                                <a class="dropdown-item" href="{{ route('registerAdmin') }}">Register with Admin</a>
-                                            </div>-->
+                                                    <a class="dropdown-item" href="{{ route('registerAdmin') }}">Register with Admin</a>
+                                                </div>-->
                                 </li>
                             @endif
                         @else
@@ -146,10 +139,10 @@
                                         aria-expanded="false" v-pre>Profile</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
+                                        <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
                                         <a class="dropdown-item" href="{{ route('membership') }}">Membership</a>
                                         <a class="dropdown-item" href="{{ route('CarWashPackageSubscription') }}">Car
                                             wash package subscriptions</a>
-                                        <a class="dropdown-item" href="{{ route('helpCentre') }}">Help center</a>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
@@ -174,7 +167,8 @@
                                         href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false" v-pre>Reservation</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('viewReservationManagementDate') }}">Today
+                                        <a class="dropdown-item"
+                                            href="{{ route('viewReservationManagementDate') }}">Today
                                             reservation</a>
                                         <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">All
                                             reservation</a>
@@ -198,18 +192,6 @@
                                             reward</a>
                                         <a class="dropdown-item" href="{{ route('viewMemberPointManagement') }}">Member
                                             point </a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link nav-link-modify dropdown-toggle"
-                                        href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false" v-pre>Profile</a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
-                                        <!--<a class="dropdown-item" href="{{ route('viewReservationManagement') }}">Rewards</a>
-                                                    <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">Membership</a>
-                                                    <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">Car wash package subscriptions</a>
-                                                    <a class="dropdown-item" href="">Help center</a>-->
                                     </div>
                                 </li>
                                 <input type="search" name="keyword" id="keyword"
@@ -221,18 +203,20 @@
                                         aria-expanded="false" v-pre>
                                         Admin {{ Auth::user()->name }}
                                     </a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                         <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
+                                         <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
+                                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                                onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
-                                        </a>
+                                                {{ __('Logout') }}
+                                            </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                            class="d-none">
-                                            @csrf
-                                        </form>
-                                    </div>
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                class="d-none">
+                                                @csrf
+                                            </form>
+                                        </div>
                                 </li>
                                 <!-- end role equals 1 is admin------->
 
@@ -243,7 +227,8 @@
                                         href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false" v-pre>Reservation</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('viewReservationManagementDate') }}">Today
+                                        <a class="dropdown-item"
+                                            href="{{ route('viewReservationManagementDate') }}">Today
                                             reservation</a>
                                         <a class="dropdown-item" href="{{ route('viewReservationManagement') }}">All
                                             reservation</a>
@@ -267,14 +252,6 @@
                                             reward</a>
                                         <a class="dropdown-item" href="{{ route('viewMemberPointManagement') }}">Member
                                             point </a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link nav-link-modify dropdown-toggle"
-                                        href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false" v-pre>Profile</a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
                                     </div>
                                 </li>
                                 <li class="nav-item dropdown">
@@ -299,18 +276,20 @@
                                         aria-expanded="false" v-pre>
                                         Admin {{ Auth::user()->name }}
                                     </a>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                             <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
+                                            <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
+                                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                                onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
-                                        </a>
+                                                {{ __('Logout') }}
+                                            </a>
 
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                            class="d-none">
-                                            @csrf
-                                        </form>
-                                    </div>
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                class="d-none">
+                                                @csrf
+                                            </form>
+                                        </div>
                                 </li>
                             @endif
                             <!-- end role equals 2 is headadmin------->

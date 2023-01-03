@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('content')
     @inject('carbon', 'Carbon\Carbon')
+
+    <style>
+    th{
+        text-align:center;
+    }
+    </style>
     <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
@@ -8,7 +14,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th style="text-align:center;">
+                        <th>
                             <H1>Notification</H1>
                         </th>
                         <th style="text-align:center;">Operates</th>

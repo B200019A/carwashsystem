@@ -73,18 +73,25 @@ class CarWashPackageSubscriptionController extends Controller
         $checkPaymentStatus = $OrderPackage->paymentStatus;
 
         if ($checkPaymentStatus == 0) {
-            Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-            Stripe\Charge::create([
-                'amount' => $request->totalAmount * 100, //RM10=10CEN 10*100=1000CEN
-                'currency' => 'MYR',
-                'source' => $request->stripeToken,
-                'description' => 'This payment is reservation purpose of car wash system',
-            ]);
-            $totalAmount = $request->totalAmount;
-            $id = $request->id;
-            DB::update('update user_package_subscriptions set paymentStatus = ?,price = ? where id = ?', [1, $totalAmount, $id]);
+            if ($request->totalAmount <= 0) {
+                Session::flash('Danger', 'Please Retry The Payment!!');
 
-            return redirect()->route('CarWashPackageSubscription');
+                return redirect()->route('CarWashPackageSubscription');
+            } else {
+                Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                Stripe\Charge::create([
+                    'amount' => $request->totalAmount * 100, //RM10=10CEN 10*100=1000CEN
+                    'currency' => 'MYR',
+                    'source' => $request->stripeToken,
+                    'description' => 'This payment is reservation purpose of car wash system',
+                ]);
+                $totalAmount = $request->totalAmount;
+                $id = $request->id;
+                DB::update('update user_package_subscriptions set paymentStatus = ?,price = ? where id = ?', [1, $totalAmount, $id]);
+
+                Session::flash('Success', 'Payment Successful!');
+                return redirect()->route('CarWashPackageSubscription');
+            }
         } else {
             Session::flash('NormalWashOverBooking', 'You already payment!!');
             return redirect()->route('CarWashPackageSubscription');
@@ -94,15 +101,14 @@ class CarWashPackageSubscriptionController extends Controller
     //repayment the package
     public function repaymentPackage($id)
     {
-        $findPackageId = userPackageSubscription::where('id',$id)->first();
-        
+        $findPackageId = userPackageSubscription::where('id', $id)->first();
+
         $packageInformation = packageSubscription::where('id', '=', $findPackageId->packageId)->get();
 
         $userMemberPoint = userMemberPoint::where('userId', '=', Auth::id())->first();
         $memberLevel = $userMemberPoint->memberLevel;
 
         $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
-
 
         $orderPackageId = $id;
         return view('/user/paymentPackage', compact('packageInformation', 'memberLevelDiscount', 'orderPackageId'));

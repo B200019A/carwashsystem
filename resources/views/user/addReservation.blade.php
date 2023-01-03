@@ -40,6 +40,18 @@
             background-color: rgb(102, 78, 107) !important;
             color:white !important;
 
+
+        }
+        .btn {
+            border-radius: 15px !important;
+            background-color: white !important;
+            color: black !important;
+
+        }
+        .btn:hover {
+            background-color: #8e8794 !important;
+            border-color: #4a4252;
+            color: white !important;
         }
     </style>
     <div class="form-content">
@@ -88,7 +100,9 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div style=" text-align: center; padding-top: 15px !important;">
                         <button type="submit" class="btn ">Add New Reservation</button>
+                        </div>
                     </form>
                 </div>
                 <br><br>

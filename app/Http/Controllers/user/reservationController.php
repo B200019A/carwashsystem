@@ -82,9 +82,16 @@ class reservationController extends Controller
 
             if ($ServiceCount > 19) {
                 //if over 20 cannot booking success
-                Session::flash('NormalWashOverBooking', 'Booking already full!');
+                Session::flash('Danger', 'Booking already full!');
 
-                return view('user/addReservation');
+                //select all branch data
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                $services = service::find($r->serviceType);
+
+                return view('/user/addReservation')
+                    ->with('branchs', $branchs)
+                    ->with('services', $services);
             } else {
                 // add new reservation to database
                 $addNewReservation = reservation::create([
@@ -99,6 +106,7 @@ class reservationController extends Controller
                     'status' => 'upcoming',
                 ]);
                 //get the reservation id
+                //can diect get addNewReservation;
                 $reservationId = DB::table('reservations')
                     ->where('userId', '=', Auth::id())
                     ->orderBy('created_at', 'DESC')
@@ -144,6 +152,8 @@ class reservationController extends Controller
                 $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
 
                 // $users = User::with(['stateoffice','cityoffice','hometownoffice'])->get();
+                $r->session()->forget('Danger');
+                $r->session()->forget('Success');
 
                 return view('/user/paymentReservation', compact('reservation', 'memberLevelDiscount'));
             }
@@ -155,12 +165,18 @@ class reservationController extends Controller
                 ->whereNot([['Services', '=', 'Normal wash'], ['status', '=', 'cancel']])
                 ->get();
             $ServiceCount = $findSameDate2->count(); //calculate the normal wash in that time
-            //echo $ServiceCount;
             if ($ServiceCount > 4) {
                 //if over 5 cannot booking success
-                Session::flash('OverBooking', 'Booking already full!');
+                Session::flash('Danger', 'Booking already full!');
 
-                return view('user/addReservation');
+                //select all branch data
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                $services = service::find($r->serviceType);
+
+                return view('/user/addReservation')
+                    ->with('branchs', $branchs)
+                    ->with('services', $services);
             } else {
                 //change to serviceNAME because not defined variable
                 $serviceNAME = $serviceName;
@@ -228,6 +244,9 @@ class reservationController extends Controller
                 //find the discount in target member level
                 $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
 
+                $r->session()->forget('Danger');
+                $r->session()->forget('Success');
+
                 return view('/user/paymentReservation', compact('reservation', 'memberLevelDiscount'));
             }
         }
@@ -282,13 +301,31 @@ class reservationController extends Controller
     //display the edit reservation depend the reservation id
     public function editReservation($id)
     {
-        $reservation = reservation::all()->where('id', $id);
-        //get branch from the database
-        $branchs = branch::whereNot('status', '=', 'close')->get();
+        $reservation = reservation::all()
+            ->where('id', $id)
+            ->first();
 
-        return view('/user/editReservation')
-            ->with('reservation', $reservation)
-            ->with('branchs', $branchs);
+        $currentDate = Carbon::now(); //plus is ->addDays() minus is ->subDays()
+
+        $reservationDate = Carbon::parse($reservation->date);
+
+        $checkDate = $reservationDate->subDays(7); //plus is ->addDays() minus is ->subDays()
+
+        $difference = $currentDate->diffInDays($checkDate);
+
+        if ($checkDate < $currentDate) {
+            echo 'true';
+            Session::flash('Danger', 'You only can edit the reservation 7 days before the reservation date!!');
+            return redirect()->route('viewMyReservation');
+        } else {
+            $reservation = reservation::all()->where('id', $id);
+            //get branch from the database
+            $branchs = branch::whereNot('status', '=', 'close')->get();
+
+            return view('/user/editReservation')
+                ->with('reservation', $reservation)
+                ->with('branchs', $branchs);
+        }
     }
 
     //update reservation to the database
@@ -309,7 +346,7 @@ class reservationController extends Controller
 
             if ($ServiceCount > 19) {
                 //if over 20 cannot booking success
-                Session::flash('NormalWashOverBooking', 'Booking already full!');
+                Session::flash('Danger', 'Booking already full!');
                 //back to edit reservsation page
                 $id = $r->reservationId;
                 $reservation = reservation::all()->where('id', $id);
@@ -325,7 +362,7 @@ class reservationController extends Controller
                 $reservation->branchId = $r->branch;
                 $reservation->save();
 
-                Session::flash('UpdateReservationSuccess', 'Upadate reservation successful!');
+                Session::flash('Success', 'Upadate reservation successful!');
                 return redirect()->route('viewMyReservation');
             }
             //if select other service
@@ -339,7 +376,7 @@ class reservationController extends Controller
             //echo $ServiceCount;
             if ($ServiceCount > 4) {
                 //if over 5 cannot booking success
-                Session::flash('NormalWashOverBooking', 'Booking already full!');
+                Session::flash('Danger', 'Booking already full!');
                 //back to edit reservsation page
                 $id = $r->reservationId;
                 $reservation = reservation::all()->where('id', $id);
@@ -355,7 +392,7 @@ class reservationController extends Controller
                 $reservation->branchId = $r->branch;
                 $reservation->save();
 
-                Session::flash('UpdateReservationSuccess', 'Upadate reservation successful!');
+                Session::flash('Success', 'Upadate reservation successful!');
                 return redirect()->route('viewMyReservation');
             }
         }
@@ -363,27 +400,46 @@ class reservationController extends Controller
     //cancel the reservation
     public function cancelReservation($id)
     {
-        $findOrderReservation = OrderReservation::where('reservationId', $id)->first();
-        if ($findOrderReservation->paymentStatus == 1) {
-            //update reservation to cancel
-            $reservation = reservation::find($id);
-            $reservation->status = 'cancel';
-            $reservation->save();
+        $reservation = reservation::all()
+            ->where('id', $id)
+            ->first();
 
-            //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund, 3 done refund)
-            DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [2, $id]);
+        $currentDate = Carbon::now(); //plus is ->addDays() minus is ->subDays()
 
+        $reservationDate = Carbon::parse($reservation->date);
+
+        $checkDate = $reservationDate->subDays(7); //plus is ->addDays() minus is ->subDays()
+
+        $difference = $currentDate->diffInDays($checkDate);
+
+        if ($checkDate < $currentDate) {
+            echo 'true';
+            Session::flash('Danger', 'You only can cancel the reservation 7 days before the reservation date!!');
             return redirect()->route('viewMyReservation');
+
         } else {
-            //update reservation to cancel
-            $reservation = reservation::find($id);
-            $reservation->status = 'cancelByPackage';
-            $reservation->save();
+            $findOrderReservation = OrderReservation::where('reservationId', $id)->first();
+            if ($findOrderReservation->paymentStatus == 1) {
+                //update reservation to cancel
+                $reservation = reservation::find($id);
+                $reservation->status = 'cancel';
+                $reservation->save();
 
-            //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund 3 done refund )
-            DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [5, $id]);
+                //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund, 3 done refund)
+                DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [2, $id]);
 
-            return redirect()->route('viewMyReservation');
+                return redirect()->route('viewMyReservation');
+            } else {
+                //update reservation to cancel
+                $reservation = reservation::find($id);
+                $reservation->status = 'cancelByPackage';
+                $reservation->save();
+
+                //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund 3 done refund )
+                DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [5, $id]);
+
+                return redirect()->route('viewMyReservation');
+            }
         }
     }
 
@@ -428,7 +484,7 @@ class reservationController extends Controller
 
             if ($ServiceCount > 19) {
                 //if over 20 cannot booking success
-                Session::flash('NormalWashOverBooking', 'Booking already full!');
+                Session::flash('Danger', 'Booking already full!');
 
                 return view('user/addReservation');
             } else {
@@ -510,6 +566,8 @@ class reservationController extends Controller
                 $userOrderPackage->times = $MinusWashTimes;
                 $userOrderPackage->save();
 
+                Session::flash('Success', 'Add Reservatuon By Package Successful!');
+
                 //<--minus the package wash times end-->
                 return redirect()->route('viewMyReservation');
             }
@@ -523,7 +581,7 @@ class reservationController extends Controller
 
             ->leftjoin('reservations', 'reservations.id', '=', 'order_reservations.reservationId')
             ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
-            ->select('reservations.*', 'order_reservations.amount as totalAmount', 'branches.name as branchName','branches.address as branchAddress')
+            ->select('reservations.*', 'order_reservations.amount as totalAmount', 'branches.name as branchName', 'branches.address as branchAddress')
 
             ->where('order_reservations.reservationId', '=', $id) //the item haven't make payment
 

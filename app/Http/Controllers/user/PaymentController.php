@@ -24,6 +24,10 @@ class PaymentController extends Controller
         $checkPaymentStatus = $OrderReservation->paymentStatus;
 
         if ($checkPaymentStatus == 0) {
+            if($request->totalAmount<=0){
+                Session::flash('Danger', 'Please Retry The Payment!!');
+                return redirect()->route('viewMyReservation');
+            }else{
             Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
             Stripe\Charge::create([
                 'amount' => $request->totalAmount * 100, //RM10=10CEN 10*100=1000CEN
@@ -43,7 +47,7 @@ class PaymentController extends Controller
             //calculate the total member point
             $totalGetMemberPoint = $memberpoint * $multipleNumber->multiple;
 
-            //find the usermemberpoitn information 
+            //find the usermemberpoitn information
             $userMemberPoint = userMemberPoint::where('userId', Auth::id())->first();
 
             //$totalMemberPoint = userMemberPoint::select('totalPoint')->where('userId','=',)->first();
@@ -58,11 +62,15 @@ class PaymentController extends Controller
             $userMemberPoint->save();
             //<---calculate the member point end--->
             //call calMemberLevelAndMemberPoint to get the new member level
-            (new rewardController)->calMemberLevelAndMemberPoint();;
+            (new rewardController)->calMemberLevelAndMemberPoint();
+
+            Session::flash('Success', 'Payment Successful!');
 
             return redirect()->route('viewMyReservation');
+            }
+
         } else {
-            Session::flash('NormalWashOverBooking', 'You already payment!!');
+            Session::flash('Danger', 'You already payment!!');
             return redirect()->route('viewMyReservation');
         }
     }

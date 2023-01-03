@@ -28,7 +28,7 @@ class referralController extends Controller
         //when times equal 0 , u cannot input invite code again!
 
         if($searchTimes){
-            Session::flash('FindFailedInviteCode',"You already input invite code!(one times only)");
+            Session::flash('Danger',"You already input invite code!(one times only)");
 
         }else{
             //check invite code whether exist
@@ -58,7 +58,7 @@ class referralController extends Controller
                 $plusFreeWashFrequencyReceiver = $freeWashFrequencyReceiver->freewash+$times;
                 $addFreeWashReceiver->update(['freewash'=> $plusFreeWashFrequencyReceiver]);
 
-
+                Session::flash('Success', 'Successful Redeem Invitation Code');
              }
         }
         return redirect()->route('referral');
