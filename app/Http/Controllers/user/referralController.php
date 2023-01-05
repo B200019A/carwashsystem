@@ -22,16 +22,21 @@ class referralController extends Controller
 
     public function addInviteCode(){
         $r=request();
-        $inviteCodeInput = $r->inviteCode;
-        $searchInviteCode = inviteCode::where('invitecode',$inviteCodeInput);
+
         $searchTimes = inviteCode::where('memberId','=',Auth::id())->where('times','=',0)->first();
+        $searchInviteCodeUser = inviteCode::where('memberId','=',Auth::id())->first();
         //when times equal 0 , u cannot input invite code again!
 
         if($searchTimes){
             Session::flash('Danger',"You already input invite code!(one times only)");
 
         }else{
-            //check invite code whether exist
+            if($searchInviteCodeUser->invitecode==$r->inviteCode){
+                Session::flash('Danger',"You cannot input your own invite code!");
+            }else{
+                $inviteCodeInput = $r->inviteCode;
+                $searchInviteCode = inviteCode::where('invitecode',$inviteCodeInput)->first();
+                //check invite code whether exist
             if($searchInviteCode){
 
                 $freeTimes= referral::find(1);
@@ -59,8 +64,13 @@ class referralController extends Controller
                 $addFreeWashReceiver->update(['freewash'=> $plusFreeWashFrequencyReceiver]);
 
                 Session::flash('Success', 'Successful Redeem Invitation Code');
+             }else{
+                Session::flash('Danger',"You input invite code does not exist!");
              }
+            }
+
         }
+
         return redirect()->route('referral');
 
     }

@@ -36,7 +36,7 @@
                                                 </div>
                                                 <div class="card__content">
                                                     <div class="card__title">{{ $userPackage->packageName }}</div>
-                                                    <p class="card__text">Left: {{ $userPackage->times }}
+                                                    <p class="card__text">Remain: {{ $userPackage->times }} times
                                                         <!-- <br> it's safe to clean
                                                     your engine bay and we recommend it from time to time in order to keep it
                                                     clean, just like you do with the rest of the car.-->

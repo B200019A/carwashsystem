@@ -59,8 +59,9 @@
                 <div id="form-content">
                     <form action="{{ route('addNewReservation_package') }}" method="POST" enctype="multipart/form-data">
                         @CSRF
-
+                         @if($userPackageId)
                          <input class="form-control" type="hidden" id="orderPackageId" name="orderPackageId" value="{{$userPackageId}}">
+                         @endif
                         <div class="form-group">
                             <label for="carPlate">Car plate</label>
                             <input class="form-control" type="text" id="carPlate" name="carPlate" required>

@@ -5,9 +5,10 @@
 
     <link rel="stylesheet" type="text/css" href="../css/Table/main.css">
     <style>
-        body{
-                 background-color:#f5f9ff;
+        body {
+            background-color: #f5f9ff;
         }
+
         #body {
             margin-top: 2%;
             margin-bottom: 2%;
@@ -60,7 +61,6 @@
             text-decoration: none;
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
         }
-
     </style>
 
 
@@ -78,8 +78,10 @@
                     <button style="border-radius: 8px;" class="w3-bar-item w3-button" value="1"
                         onclick="openReservation('upcoming')">UpComing</button>
 
-                    <button style="border-radius: 8px;" class="w3-bar-item w3-button" value="2" onclick="openReservation('unpaid')">Unpaid</button>
-                    <button style="border-radius: 8px;" class="w3-bar-item w3-button" value="3" onclick="openReservation('cancel')">Cancel</button>
+                    <button style="border-radius: 8px;" class="w3-bar-item w3-button" value="2"
+                        onclick="openReservation('unpaid')">Unpaid</button>
+                    <button style="border-radius: 8px;" class="w3-bar-item w3-button" value="3"
+                        onclick="openReservation('cancel')">Cancel</button>
                     <button style="border-radius: 8px;"class="w3-bar-item w3-button" value="4"
                         onclick="openReservation('exipired')">Booking History</button>
 
@@ -114,7 +116,7 @@
                                     <tr>
                                         <td class="column1"> {{ $allReservations->orderId }}</td>
                                         <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount,2) }}</td>
+                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
                                         <td class="column4">{{ $allReservations->carPlate }}</td>
                                         <td class="column5">{{ $allReservations->date }}</td>
                                         @if ($allReservations->timeSlot == '1')
@@ -138,8 +140,7 @@
                                                 onClick="return confirm('Are you sure to cancel?')">Cancel</a>
                                         </td>
                                         <td class="column10">
-                                            <a
-                                                href="{{ route('printInvoice', ['id' => $allReservations->id]) }}"
+                                            <a href="{{ route('printInvoice', ['id' => $allReservations->id]) }}"
                                                 class="btn btn-info btn-xs">Print</a>
                                         </td>
                                     </tr>
@@ -176,7 +177,7 @@
                                     <tr>
                                         <td class="column1"> {{ $allReservations->orderId }}</td>
                                         <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount,2) }}</td>
+                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
 
                                         <td class="column4">{{ $allReservations->carPlate }}</td>
                                         <td class="column5">{{ $allReservations->date }}</td>
@@ -209,7 +210,7 @@
                 <table id="myTable3">
                     <thead>
                         <tr class="table100-head">
-                            <th class="column1">Order id</th>
+                            <th class="column1">Order Id</th>
                             <th class="column2">Type of services</th>
                             <th class="column3">Price</th>
                             <th class="column4">Car plate</th>
@@ -225,7 +226,7 @@
                                 <tr>
                                     <td class="column1"> {{ $allReservations->orderId }}</td>
                                     <td class="column2">{{ $allReservations->Services }}</td>
-                                    <td class="column3">RM {{ number_format($allReservations->totalAmount,2) }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
                                     <td class="column4">{{ $allReservations->carPlate }}</td>
                                     <td class="column5">{{ $allReservations->date }}</td>
                                     @if ($allReservations->timeSlot == '1')
@@ -246,7 +247,7 @@
                                 <tr>
                                     <td class="column1"> {{ $allReservations->orderId }}</td>
                                     <td class="column2">{{ $allReservations->Services }}</td>
-                                    <td class="column3">RM {{ number_format($allReservations->totalAmount,2) }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
                                     <td class="column4">{{ $allReservations->carPlate }}</td>
                                     <td class="column5">{{ $allReservations->date }}</td>
                                     @if ($allReservations->timeSlot == '1')
@@ -285,7 +286,7 @@
                             <th class="column6">Time slot</th>
                             <th class="column7">Branch</th>
                             <th class="column8">Status</th>
-                           <!-- <th class="column9">Operate</th>-->
+                            <!-- <th class="column9">Operate</th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -294,7 +295,7 @@
                                 <tr>
                                     <td class="column1"> {{ $allReservations->orderId }}</td>
                                     <td class="column2">{{ $allReservations->Services }}</td>
-                                    <td class="column3">RM {{ number_format($allReservations->totalAmount,2) }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
                                     <td class="column4">{{ $allReservations->carPlate }}</td>
                                     <td class="column5">{{ $allReservations->date }}</td>
                                     @if ($allReservations->timeSlot == '1')
@@ -310,7 +311,7 @@
                                     @endif
                                     <td class="column7">{{ $allReservations->branchName }}</td>
                                     <td class="column8" style="color:red;">{{ $allReservations->status }}</td>
-                                   <!-- <td class="column9"><a href="" class="btn btn-warning btn-xs">view</a></td>-->
+                                    <!-- <td class="column9"><a href="" class="btn btn-warning btn-xs">view</a></td>-->
                                 </tr>
                             @endif
                         @endforeach

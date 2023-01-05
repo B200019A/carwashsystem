@@ -160,7 +160,7 @@
                 <table id="myTable1">
                     <thead>
                         <tr class="table100-head">
-                            <th class="column1">Order id</th>
+                            <th class="column1">Order Id</th>
                             <th class="column2">Type of services</th>
                             <th class="column3">Price</th>
                             <th class="column4">Car plate</th>
@@ -190,7 +190,29 @@
                                     <td class="column6">6:00 PM</td>
                                 @endif
                                 <td class="column7">{{ $viewReservation->branchName }}</td>
-                                <td class="column8" style="">{{ $viewReservation->status }}</td>
+
+                                @if($viewReservation->paymentStatus == 1 || $viewReservation->paymentStatus == 4)
+
+                                @if($viewReservation->status == 'expired')
+                                <td class="column8" style="color: red;">{{ $viewReservation->status }}</td>
+                                @else
+                                <td class="column8" style="color: green;">{{ $viewReservation->status }}</td>
+                                @endif
+                                @elseif($viewReservation->paymentStatus == 0)
+                                    <td class="column8" style="color: purple;"> No payment, {{ $viewReservation->status }}</td>
+                                @elseif($viewReservation->paymentStatus == 2 ||$viewReservation->paymentStatus == 5)
+                                    @if($viewReservation->status == 'cancel' || $viewReservation->status == 'cancelByPackage')
+                                    <td class="column8" style="color: grey;">pending
+
+
+
+                                    {{ $viewReservation->status }}</td>
+                                    @else
+                                    <td class="column8" style="color: grey;">{{ $viewReservation->status }},pending cancel</td>
+                                    @endif
+                                @elseif($viewReservation->paymentStatus == 3)
+                                    <td class="column8" style="color: orange;">{{ $viewReservation->status }},success cancel</td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

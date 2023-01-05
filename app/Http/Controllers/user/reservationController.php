@@ -475,6 +475,8 @@ class reservationController extends Controller
                 $reservation->status = 'cancel';
                 $reservation->save();
 
+                Session::flash('Success', 'Cancel Successful, Respond to requests within seven days.');
+
                 //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund, 3 done refund)
                 DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [2, $id]);
 
@@ -484,6 +486,8 @@ class reservationController extends Controller
                 $reservation = reservation::find($id);
                 $reservation->status = 'cancelByPackage';
                 $reservation->save();
+
+                Session::flash('Success', 'Cancel Successful, Respond to requests within seven days.');
 
                 //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund 3 done refund )
                 DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [5, $id]);
@@ -536,13 +540,8 @@ class reservationController extends Controller
                 //if over 20 cannot booking success
                 Session::flash('Danger', 'Booking already full!');
 
-                //select all branch data
-                $branchs = branch::whereNot('status', '=', 'close')->get();
+                return redirect()->route('viewAddReservation_package', ['id'=>$r->orderPackageId]);
 
-                $id = $r->userPackageId;
-                return view('/user/addReservation_package')
-                    ->with('branchs', $branchs)
-                    ->with('userPackageId', $id);
             } else {
                 $findSameTimeSlot1 = reservation::where([['date', '=', $r->date], ['Services', '=', 'Normal wash'], ['branchId', '=', $r->branch], ['timeSlot', '=', $r->timeSlot]])
                     ->whereNot('status', '=', 'cancel')
@@ -553,13 +552,7 @@ class reservationController extends Controller
                     //if over 20 cannot booking success
                     Session::flash('Danger', 'Time already full, please change to another time!');
 
-                    //select all branch data
-                    $branchs = branch::whereNot('status', '=', 'close')->get();
-
-                    $id = $r->userPackageId;
-                    return view('/user/addReservation_package')
-                        ->with('branchs', $branchs)
-                        ->with('userPackageId', $id);
+                    return redirect()->route('viewAddReservation_package', ['id'=>$r->orderPackageId]);
                 } else {
                     // add new reservation to database
                     $addNewReservation = reservation::create([
@@ -639,7 +632,7 @@ class reservationController extends Controller
                     $userOrderPackage->times = $MinusWashTimes;
                     $userOrderPackage->save();
 
-                    Session::flash('Success', 'Add Reservatuon By Package Successful!');
+                    Session::flash('Success', 'Order Reservation By Package Successful!');
 
                     //<--minus the package wash times end-->
                     return redirect()->route('viewMyReservation');

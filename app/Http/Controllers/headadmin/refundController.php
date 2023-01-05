@@ -17,11 +17,11 @@ class refundController extends Controller
     {
         $r = request();
         $orderId = $id;
- 
+
         $findOrderReservation = DB::table('order_reservations')
             ->where('id', $orderId)
             ->first();
-            
+
         if($findOrderReservation->paymentStatus == 5) {
             //get the user order package id
 
@@ -32,7 +32,7 @@ class refundController extends Controller
             $orderPackageId = $findOrderReservation->orderPackageId;
             echo $orderPackageId ;
             $userOrderPackage =  userPackageSubscription::where('id', $orderPackageId)->first();
-           
+
 
             $plusWashTimes = $userOrderPackage->times + 1;
             echo $plusWashTimes ;
