@@ -26,11 +26,11 @@
                             <a href="{{ route('deleteMemberLevel', ['id' => $memberLevel->id]) }}"
                                     class="btn btn-danger btn-xs">Delete</a>
                         </td>
-                    </tr> 
+                    </tr>
                     @endforeach
 
                 </tbody>
-                </table>      
+                </table>
         </div>
         <div class="col-sm-3"></div>
     </div>
@@ -53,16 +53,11 @@
             <label for="dicount">Discount %</label>
             <input class="form-control" type="number" id="dicount" name="dicount" >
             </div>
-  
+
             <button type="submit" class="btn btn-primary">Add New Mmeber Level</button>
         </form>
         <br><br>
     </div>
     <div class="col-sm-3"></div>
 </div>
-
-
-
-
-
 @endsection

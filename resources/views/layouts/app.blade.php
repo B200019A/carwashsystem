@@ -106,12 +106,12 @@
                             @if (Route::has('register'))
                                 <li class="nav-item">
                                     <!--<a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Register Type</a>
-                                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">-->
+                                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">-->
                                     <a class="nav-link nav-link-modify"
                                         href="{{ route('register') }}">{{ __('Register') }}</a>
                                     <!--<a class="dropdown-item" href="{{ route('registerWithInv') }}">{{ __('Register With Inv') }}</a>
-                                                    <a class="dropdown-item" href="{{ route('registerAdmin') }}">Register with Admin</a>
-                                                </div>-->
+                                                        <a class="dropdown-item" href="{{ route('registerAdmin') }}">Register with Admin</a>
+                                                    </div>-->
                                 </li>
                             @endif
                         @else
@@ -134,8 +134,8 @@
                                         class="nav-link nav-link-modify px-2 text-dark">Referral<span
                                             class="badge bg-danger">{{ Session()->get('cartItem') }}</span></a></li>
                                 <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link nav-link-modify dropdown-toggle"
-                                        href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    <a id="navbarDropdown" class="nav-link nav-link-modify dropdown-toggle" href="#"
+                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false" v-pre>Profile</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                         <a class="dropdown-item" href="{{ route('myProfile') }}">My profile</a>
@@ -203,20 +203,20 @@
                                         aria-expanded="false" v-pre>
                                         Admin {{ Auth::user()->name }}
                                     </a>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                         <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
-                                         <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
-                                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                                onclick="event.preventDefault();
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
+                                        <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
-                                                {{ __('Logout') }}
-                                            </a>
+                                            {{ __('Logout') }}
+                                        </a>
 
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                class="d-none">
-                                                @csrf
-                                            </form>
-                                        </div>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            class="d-none">
+                                            @csrf
+                                        </form>
+                                    </div>
                                 </li>
                                 <!-- end role equals 1 is admin------->
 
@@ -276,20 +276,20 @@
                                         aria-expanded="false" v-pre>
                                         Admin {{ Auth::user()->name }}
                                     </a>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                             <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
-                                            <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
-                                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                                onclick="event.preventDefault();
+                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{{ route('myProfile') }}">Profile</a>
+                                        <a class="dropdown-item" href="{{ route('changePassword') }}">Change Password</a>
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
                                                         document.getElementById('logout-form').submit();">
-                                                {{ __('Logout') }}
-                                            </a>
+                                            {{ __('Logout') }}
+                                        </a>
 
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                class="d-none">
-                                                @csrf
-                                            </form>
-                                        </div>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                            class="d-none">
+                                            @csrf
+                                        </form>
+                                    </div>
                                 </li>
                             @endif
                             <!-- end role equals 2 is headadmin------->

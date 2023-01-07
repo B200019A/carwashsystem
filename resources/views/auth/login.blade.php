@@ -50,7 +50,7 @@
             height: 40px;
             border-radius: 2px;
             background-color: #fff;
-        }
+        }++++
 
         .google-icon {
             position: absolute;

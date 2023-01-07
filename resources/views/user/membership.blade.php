@@ -86,7 +86,30 @@
                 </div>
             @endif
         @endforeach
+        @foreach ($userMemberPoints as $userMemberPoint)
+            @if ($userMemberPoint->memberLevel == 'Bronze')
+                <div class="columns">
+                    <ul class="price">
+                        <li class="header" style="background-color:#04AA6D">Bronze</li>
+                        <li class="grey">Target Point: 500</li>
+                        <li>Current Mmeber Point: {{ $userMemberPoint->currentPoint }}</li>
+                        <li>Benefit: 1% discount</li>
+                        <li style="border-radius: 0px 0px 25px 25px;">(RM 1 spending get one point)</li>
+                    </ul>
+                </div>
+            @else
+                <div class="columns">
+                    <ul class="price">
+                        <li class="header" style="background-color:#3f3b4b;">Bronze</li>
+                        <li class="grey">Target Point: 500</li>
+                        <li>Current Mmeber Point: --</li>
+                        <li>Benefit: 1% discount</li>
+                        <li style="border-radius: 0px 0px 25px 25px;">(RM 1 spending get one point)</li>
 
+                    </ul>
+                </div>
+            @endif
+        @endforeach
         @foreach ($userMemberPoints as $userMemberPoint)
             @if ($userMemberPoint->memberLevel == 'Silver')
                 <div class="columns">
