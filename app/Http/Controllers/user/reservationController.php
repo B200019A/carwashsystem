@@ -25,8 +25,8 @@ class reservationController extends Controller
     public function viewSelectService()
     {
         //select all branch data
-        $userPackages = DB::table('user_package_subscriptions')
-            ->leftjoin('package_subscriptions', 'package_subscriptions.id', '=', 'user_package_subscriptions.packageId')
+        $userPackages = DB::table('user_package_subscriptions')//main table
+            ->leftjoin('package_subscriptions'/*second table*/, 'package_subscriptions.id', '=', 'user_package_subscriptions.packageId')
             ->select('package_subscriptions.name as packageName', 'user_package_subscriptions.*')
             ->where('userId', '=', Auth::id())
             ->get();

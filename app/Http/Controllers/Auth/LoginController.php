@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Http\Controllers\AuthBackEnd\AuthenticatesUsers;
 
-
 class LoginController extends Controller
 {
     /*

@@ -101,7 +101,11 @@
                                 <select name="branch" id="branch" class="form-control"
                                     value="{{ $reservations->branchId }}" required>
                                     @foreach ($branchs as $branch)
+                                        @if( $reservations->branchId==$branch->id )
+                                        <option value="{{ $branch->id }}" selected>{{ $branch->name }}</option>
+                                        @else
                                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>

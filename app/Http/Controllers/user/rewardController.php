@@ -22,29 +22,29 @@ class rewardController extends Controller
     //go to membership page
     public function membership()
     {
-       
         $this->calMemberLevelAndMemberPoint();
-        $userMemberPoints = userMemberPoint::where('userId', Auth::id())->get();        
-        return view('/user/membership')->with('userMemberPoints',$userMemberPoints);
+        $userMemberPoints = userMemberPoint::where('userId', Auth::id())->get();
+        return view('/user/membership')->with('userMemberPoints', $userMemberPoints);
     }
-    public function calMemberLevelAndMemberPoint(){
-
-   
+    public function calMemberLevelAndMemberPoint()
+    {
         $userTotalMemberPoint = userMemberPoint::where('userId', Auth::id())->first();
-        $totalMemberPoint= $userTotalMemberPoint->totalPoint;
-        
+        $totalMemberPoint = $userTotalMemberPoint->totalPoint;
+
         //small unti big to check the target point leve;l
-        $memberLevels = DB::table('member_levels')->orderBy('targetPoint','asc')->get();
-        $MemberLevelName="new";
+        $memberLevels = DB::table('member_levels')
+            ->orderBy('targetPoint', 'asc')
+            ->get();
+        $MemberLevelName = 'new';
         //check the member point reahced which member level
-        foreach($memberLevels as $memberLevel){
+        foreach ($memberLevels as $memberLevel) {
             $targetPoint = $memberLevel->targetPoint;
-            if($totalMemberPoint>=$targetPoint){
+            if ($totalMemberPoint >= $targetPoint) {
                 $MemberLevelName = $memberLevel->memberLevel;
             }
         }
-        
-        //update total memberpoint ,curret memberpoint 
+
+        //update total memberpoint ,curret memberpoint
         $userMemberPoint = userMemberPoint::where('userId', Auth::id())->first();
         $userMemberPoint->memberLevel = $MemberLevelName;
         $userMemberPoint->save();

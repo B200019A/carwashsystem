@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use DB;
+use Auth;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -25,4 +30,5 @@ class HomeController extends Controller
     {
         return view('welcome');
     }
+
 }
