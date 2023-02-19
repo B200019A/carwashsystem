@@ -1,21 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\user;
+namespace App\Http\Controllers\application\user;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use DB;
 use Session;
 use App\Models\inviteCode;
 use App\Models\referral;
 use Auth;
 
-class referralController extends Controller
+
+class ReferralController extends Controller
 {
     public function referral(){
         $invitecode = DB::table('invite_codes')->where('memberId',Auth::id())->get();
 
-        return view('/user/referral')->with('invitecodes',$invitecode);
+        $response = ['invitecodes' => $invitecode];
+
+        return response()->json($response, 200);
+
     }
 
     public function addInviteCode(){
@@ -26,11 +30,16 @@ class referralController extends Controller
         //when times equal 0 , u cannot input invite code again!
 
         if($searchTimes){
-            Session::flash('Danger',"You already input invite code!(one times only)");
+
+            $response = ['message' => 'You already input invite code!(one times only)'];
+            return response()->json($response, 400);
 
         }else{
             if($searchInviteCodeUser->invitecode==$r->inviteCode){
-                Session::flash('Danger',"You cannot input your own invite code!");
+
+                $response = ['message' => 'You cannot input your own invite code!'];
+                return response()->json($response, 400);
+
             }else{
                 $inviteCodeInput = $r->inviteCode;
                 $searchInviteCode = inviteCode::where('invitecode',$inviteCodeInput)->first();
@@ -61,15 +70,19 @@ class referralController extends Controller
                 $plusFreeWashFrequencyReceiver = $freeWashFrequencyReceiver->freewash+$times;
                 $addFreeWashReceiver->update(['freewash'=> $plusFreeWashFrequencyReceiver]);
 
-                Session::flash('Success', 'Successful Redeem Invitation Code');
+                $response = ['message' => 'Successful Redeem Invitation Code'];
+                return response()->json($response, 200);
+
              }else{
-                Session::flash('Danger',"You input invite code does not exist!");
+
+                $response = ['message' => 'You input invite code does not exist!'];
+                return response()->json($response, 400);
              }
             }
 
         }
 
-        return redirect()->route('referral');
+
 
     }
 }

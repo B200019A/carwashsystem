@@ -127,11 +127,11 @@ Route::get('/user/paymentReservation/{id}', [App\Http\Controllers\user\reservati
 
 Route::get('/user/notification', [App\Http\Controllers\user\NotificationController::class, 'notification'])->name('notification');
 
-Route::get('/user/reward', [App\Http\Controllers\user\rewardController::class, 'reward'])->name('reward');
+// Route::get('/user/reward', [App\Http\Controllers\user\rewardController::class, 'reward'])->name('reward');
 
 Route::get('/user/membership', [App\Http\Controllers\user\rewardController::class, 'membership'])->name('membership');
 
-Route::get('/user/helpCentre', [App\Http\Controllers\user\helpCentreController::class, 'helpCentre'])->name('helpCentre');
+// Route::get('/user/helpCentre', [App\Http\Controllers\user\helpCentreController::class, 'helpCentre'])->name('helpCentre');
 
 //<----referral-->
 Route::get('/user/referral', [App\Http\Controllers\user\referralController::class, 'referral'])->name('referral');

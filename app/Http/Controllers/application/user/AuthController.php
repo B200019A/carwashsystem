@@ -30,6 +30,26 @@ class AuthController extends Controller
             'email' => $req->email,
             'password' => Hash::make($req->password)
         ]);
+
+        //if is user need genrate the invite code
+        do {
+            //generate a random string using Laravel's str_random helper
+            $inviteCode = Str::random(6); //check if the token already exists and if it does, try again
+        } while (inviteCode::where('invitecode', $inviteCode)->first());
+
+        $createInviteCode = inviteCode::create([
+            'memberId' => $user->id,
+            'invitecode' => $inviteCode,
+            'freewash' => '0.00',
+        ]);
+        $userId = $user->id;
+        $createMemberPoint = userMemberPoint::create([
+            'totalPoint' => 0,
+            'currentPoint' => 0,
+            'memberLevel' => 'new',
+            'userId' => $userId,
+        ]);
+
         $token = $user->createToken('Personal Access Token')->plainTextToken;
         $response = ['user' => $user, 'token' => $token];
         return response()->json($response, 200);

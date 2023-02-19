@@ -191,6 +191,8 @@
                                             <td class="column6">4:00 PM</td>
                                         @elseif($allReservations->timeSlot == '5')
                                             <td class="column6">6:00 PM</td>
+                                        @else
+                                            <td class="column6">{{$allReservations->timeSlot}}</td>
                                         @endif
                                         <td class="column8">{{ $allReservations->branchName }}</td>
                                         <td class="column9" style="color:green;">{{ $allReservations->status }}</td>

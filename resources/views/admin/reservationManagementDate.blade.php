@@ -72,12 +72,12 @@
 
             <li class="nav-item dropdown">
                 <a id="navbarDropdown" style="color:white !important;" class="  nav-style dropdown-toggle" href="#"
-                    role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                    v-pre>Branch</a>
+                    role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>Branch</a>
                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     @foreach ($branches as $branch)
-                        <a href="{{ route('findBranchreservation', ['id' => $branch->id]) }}"><button style="border-radius: 8px;" class="w3-bar-item w3-button" value="{{$branch->id}}"
-                            >{{ $branch->name }}</button><a>
+                        <a href="{{ route('findBranchreservation', ['id' => $branch->id]) }}"><button
+                                style="border-radius: 8px;" class="w3-bar-item w3-button"
+                                value="{{ $branch->id }}">{{ $branch->name }}</button><a>
                     @endforeach
                 </div>
             </li>
@@ -104,27 +104,29 @@
                     </thead>
                     <tbody>
                         @foreach ($allReservation as $allReservations)
-                            @if ($allReservations->timeSlot == '1')
-                                    <tr>
-                                        <td class="column1"> {{ $allReservations->orderId }}</td>
-                                        <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
-                                        <td class="column4">{{ $allReservations->carPlate }}</td>
-                                        <td class="column5">{{ $allReservations->date }}</td>
-                                        @if ($allReservations->timeSlot == '1')
-                                            <td class="column6">10:00 AM</td>
-                                        @elseif($allReservations->timeSlot == '2')
-                                            <td class="column6">12:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '3')
-                                            <td class="column6">2:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '4')
-                                            <td class="column6">4:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '5')
-                                            <td class="column6">6:00 PM</td>
-                                        @endif
-                                        <td class="column7">{{ $allReservations->branchName }}</td>
-                                        <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
-                                    </tr>
+                            @if ($allReservations->timeSlot <= '12:00')
+                                <tr>
+                                    <td class="column1"> {{ $allReservations->orderId }}</td>
+                                    <td class="column2">{{ $allReservations->Services }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
+                                    <td class="column4">{{ $allReservations->carPlate }}</td>
+                                    <td class="column5">{{ $allReservations->date }}</td>
+                                    @if ($allReservations->timeSlot == '1')
+                                        <td class="column6">10:00 AM</td>
+                                    @elseif($allReservations->timeSlot == '2')
+                                        <td class="column6">12:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '3')
+                                        <td class="column6">2:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '4')
+                                        <td class="column6">4:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '5')
+                                        <td class="column6">6:00 PM</td>
+                                    @else
+                                        <td class="column6">{{ $allReservations->timeSlot }}</td>
+                                    @endif
+                                    <td class="column7">{{ $allReservations->branchName }}</td>
+                                    <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -152,26 +154,28 @@
                     <tbody>
                         @foreach ($allReservation as $allReservations)
                             @if ($allReservations->timeSlot == '2')
-                                    <tr>
-                                        <td class="column1"> {{ $allReservations->orderId }}</td>
-                                        <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
-                                        <td class="column4">{{ $allReservations->carPlate }}</td>
-                                        <td class="column5">{{ $allReservations->date }}</td>
-                                        @if ($allReservations->timeSlot == '1')
-                                            <td class="column6">10:00 AM</td>
-                                        @elseif($allReservations->timeSlot == '2')
-                                            <td class="column6">12:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '3')
-                                            <td class="column6">2:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '4')
-                                            <td class="column6">4:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '5')
-                                            <td class="column6">6:00 PM</td>
-                                        @endif
-                                        <td class="column7">{{ $allReservations->branchName }}</td>
-                                        <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
-                                    </tr>
+                                <tr>
+                                    <td class="column1"> {{ $allReservations->orderId }}</td>
+                                    <td class="column2">{{ $allReservations->Services }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
+                                    <td class="column4">{{ $allReservations->carPlate }}</td>
+                                    <td class="column5">{{ $allReservations->date }}</td>
+                                    @if ($allReservations->timeSlot == '1')
+                                        <td class="column6">10:00 AM</td>
+                                    @elseif($allReservations->timeSlot == '2')
+                                        <td class="column6">12:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '3')
+                                        <td class="column6">2:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '4')
+                                        <td class="column6">4:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '5')
+                                        <td class="column6">6:00 PM</td>
+                                    @else
+                                        <td class="column6">{{ $allReservations->timeSlot }}</td>
+                                    @endif
+                                    <td class="column7">{{ $allReservations->branchName }}</td>
+                                    <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -199,26 +203,28 @@
                     <tbody>
                         @foreach ($allReservation as $allReservations)
                             @if ($allReservations->timeSlot == '3')
-                                    <tr>
-                                        <td class="column1"> {{ $allReservations->orderId }}</td>
-                                        <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
-                                        <td class="column4">{{ $allReservations->carPlate }}</td>
-                                        <td class="column5">{{ $allReservations->date }}</td>
-                                        @if ($allReservations->timeSlot == '1')
-                                            <td class="column6">10:00 AM</td>
-                                        @elseif($allReservations->timeSlot == '2')
-                                            <td class="column6">12:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '3')
-                                            <td class="column6">2:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '4')
-                                            <td class="column6">4:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '5')
-                                            <td class="column6">6:00 PM</td>
-                                        @endif
-                                        <td class="column7">{{ $allReservations->branchName }}</td>
-                                        <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
-                                    </tr>
+                                <tr>
+                                    <td class="column1"> {{ $allReservations->orderId }}</td>
+                                    <td class="column2">{{ $allReservations->Services }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
+                                    <td class="column4">{{ $allReservations->carPlate }}</td>
+                                    <td class="column5">{{ $allReservations->date }}</td>
+                                    @if ($allReservations->timeSlot == '1')
+                                        <td class="column6">10:00 AM</td>
+                                    @elseif($allReservations->timeSlot == '2')
+                                        <td class="column6">12:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '3')
+                                        <td class="column6">2:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '4')
+                                        <td class="column6">4:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '5')
+                                        <td class="column6">6:00 PM</td>
+                                    @else
+                                        <td class="column6">{{ $allReservations->timeSlot }}</td>
+                                    @endif
+                                    <td class="column7">{{ $allReservations->branchName }}</td>
+                                    <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -227,7 +233,7 @@
 
         </div>
 
-         <div class="w3-container reservation">
+        <div class="w3-container reservation">
             <div id="tablePosition">
                 <h5 style="text-align:left;">4:00 PM</h5>
                 <table id="myTable1">
@@ -246,26 +252,28 @@
                     <tbody>
                         @foreach ($allReservation as $allReservations)
                             @if ($allReservations->timeSlot == '4')
-                                    <tr>
-                                        <td class="column1"> {{ $allReservations->orderId }}</td>
-                                        <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
-                                        <td class="column4">{{ $allReservations->carPlate }}</td>
-                                        <td class="column5">{{ $allReservations->date }}</td>
-                                        @if ($allReservations->timeSlot == '1')
-                                            <td class="column6">10:00 AM</td>
-                                        @elseif($allReservations->timeSlot == '2')
-                                            <td class="column6">12:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '3')
-                                            <td class="column6">2:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '4')
-                                            <td class="column6">4:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '5')
-                                            <td class="column6">6:00 PM</td>
-                                        @endif
-                                        <td class="column7">{{ $allReservations->branchName }}</td>
-                                        <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
-                                    </tr>
+                                <tr>
+                                    <td class="column1"> {{ $allReservations->orderId }}</td>
+                                    <td class="column2">{{ $allReservations->Services }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
+                                    <td class="column4">{{ $allReservations->carPlate }}</td>
+                                    <td class="column5">{{ $allReservations->date }}</td>
+                                    @if ($allReservations->timeSlot == '1')
+                                        <td class="column6">10:00 AM</td>
+                                    @elseif($allReservations->timeSlot == '2')
+                                        <td class="column6">12:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '3')
+                                        <td class="column6">2:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '4')
+                                        <td class="column6">4:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '5')
+                                        <td class="column6">6:00 PM</td>
+                                    @else
+                                        <td class="column6">{{ $allReservations->timeSlot }}</td>
+                                    @endif
+                                    <td class="column7">{{ $allReservations->branchName }}</td>
+                                    <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -274,7 +282,7 @@
 
         </div>
 
-         <div class="w3-container reservation">
+        <div class="w3-container reservation">
             <div id="tablePosition">
                 <h5 style="text-align:left;">6:00 PM</h5>
                 <table id="myTable1">
@@ -293,26 +301,28 @@
                     <tbody>
                         @foreach ($allReservation as $allReservations)
                             @if ($allReservations->timeSlot == '5')
-                                    <tr>
-                                        <td class="column1"> {{ $allReservations->orderId }}</td>
-                                        <td class="column2">{{ $allReservations->Services }}</td>
-                                        <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
-                                        <td class="column4">{{ $allReservations->carPlate }}</td>
-                                        <td class="column5">{{ $allReservations->date }}</td>
-                                        @if ($allReservations->timeSlot == '1')
-                                            <td class="column6">10:00 AM</td>
-                                        @elseif($allReservations->timeSlot == '2')
-                                            <td class="column6">12:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '3')
-                                            <td class="column6">2:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '4')
-                                            <td class="column6">4:00 PM</td>
-                                        @elseif($allReservations->timeSlot == '5')
-                                            <td class="column6">6:00 PM</td>
-                                        @endif
-                                        <td class="column7">{{ $allReservations->branchName }}</td>
-                                        <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
-                                    </tr>
+                                <tr>
+                                    <td class="column1"> {{ $allReservations->orderId }}</td>
+                                    <td class="column2">{{ $allReservations->Services }}</td>
+                                    <td class="column3">RM {{ number_format($allReservations->totalAmount, 2) }}</td>
+                                    <td class="column4">{{ $allReservations->carPlate }}</td>
+                                    <td class="column5">{{ $allReservations->date }}</td>
+                                    @if ($allReservations->timeSlot == '1')
+                                        <td class="column6">10:00 AM</td>
+                                    @elseif($allReservations->timeSlot == '2')
+                                        <td class="column6">12:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '3')
+                                        <td class="column6">2:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '4')
+                                        <td class="column6">4:00 PM</td>
+                                    @elseif($allReservations->timeSlot == '5')
+                                        <td class="column6">6:00 PM</td>
+                                    @else
+                                        <td class="column6">{{ $allReservations->timeSlot }}</td>
+                                    @endif
+                                    <td class="column7">{{ $allReservations->branchName }}</td>
+                                    <td class="column8" style="color:green;">{{ $allReservations->status }}</td>
+                                </tr>
                             @endif
                         @endforeach
                     </tbody>
@@ -320,5 +330,4 @@
             </div>
 
         </div>
-
-@endsection
+    @endsection

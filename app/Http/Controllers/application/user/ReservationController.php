@@ -125,7 +125,7 @@ class ReservationController extends Controller
 
                 $services = service::find($r->serviceType);
 
-                $response = ['message' => 'Booking already full!'];
+                $response = ['message' => 'Booking already full!', 'branchs' => $branchs, 'services' => $services];
                 return response()->json($response, 400);
             } else {
                 //depend service number separate the service type name
@@ -200,7 +200,8 @@ class ReservationController extends Controller
 
                 $services = service::find($r->serviceType);
 
-                $response = ['message' => 'Booking already full!'];
+                $response = ['message' => 'Booking already full!', 'branchs' => $branchs, 'services' => $services];
+
                 return response()->json($response, 400);
             } else {
                 //depend service number separate the service type name
@@ -209,7 +210,7 @@ class ReservationController extends Controller
                 $serviceName = $serviceInformation->name;
                 $price = $serviceInformation->price;
 
-                // add new reservation to database
+                //add new reservation to database
                 $addNewReservation = reservation::create([
                     'userId' => Auth::id(),
                     'branchId' => $r->branch,
@@ -233,7 +234,8 @@ class ReservationController extends Controller
                 $addNewOrder = OrderReservation::create([
                     'reservationId' => $reservationNumber,
                     'userId' => Auth::id(),
-                    'paymentStatus' => 0, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
+                    //skip the payment firsts
+                    'paymentStatus' => 1, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
                     'amount' => $reservationPrice,
                     'memberPoint' => $totalGetMemberPoint,
                     'orderPackageId' => '0',
@@ -257,8 +259,207 @@ class ReservationController extends Controller
                 //find the discount in target member level
                 $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
 
-                $response = ['reservation' => $reservation, 'memberLevelDiscount' => $memberLevelDiscount];
+                //calculate the discount price
+                foreach ($reservation as $reservations) {
+                    $reservation_price = $reservations->price;
+                }
+                $discount = $memberLevelDiscount->discount / 100;
+                $discount_amount = $reservation_price * $discount;
+                $total_price = $reservation_price - $discount_amount;
 
+                //calculate the after discount total price
+                $response = ['reservation' => $reservation, 'memberLevelDiscount' => $memberLevelDiscount, 'discountAmount' => $discount_amount, 'totalPrice' => $total_price];
+
+                // $response = ['reservation' => $reservation, 'memberLevelDiscount' => $memberLevelDiscount];
+
+                return response()->json($response, 200);
+            }
+        }
+    }
+
+    public function cancelReservation($id)
+    {
+        //reservation id
+        $reservation = reservation::all()
+            ->where('id', $id)
+            ->first();
+
+        $currentDate = Carbon::now(); //plus is ->addDays() minus is ->subDays()
+
+        $reservationDate = Carbon::parse($reservation->date);
+
+        $checkDate = $reservationDate->subDays(7); //plus is ->addDays() minus is ->subDays()
+
+        $difference = $currentDate->diffInDays($checkDate);
+
+        if ($checkDate < $currentDate) {
+            $response = ['message' => 'You only can cancel the reservation 7 days before the reservation date!!'];
+
+            return response()->json($response, 200);
+        } else {
+            $findOrderReservation = OrderReservation::where('reservationId', $id)->first();
+            if ($findOrderReservation->paymentStatus == 1) {
+                //update reservation to cancel
+                $reservation = reservation::find($id);
+                $reservation->status = 'cancel';
+                $reservation->save();
+
+                //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund, 3 done refund)
+                DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [2, $id]);
+
+                $response = ['message' => 'Cancel Succssful, Respond to requests within seven days.'];
+
+                return response()->json($response, 200);
+            } else {
+                //update reservation to cancel
+                $reservation = reservation::find($id);
+                $reservation->status = 'cancelByPackage';
+                $reservation->save();
+
+                //update payment status to 2 (0 no payment, 1 done payment , 2 cancel payment need to refund 3 done refund )
+                DB::update('update order_reservations set paymentStatus = ? where reservationId = ?', [5, $id]);
+
+                $response = ['message' => 'Cancel Succssful, Respond to requests within seven days.'];
+
+                return response()->json($response, 200);
+            }
+        }
+    }
+
+    //no done the payment ,want to pay one more
+    public function repayment($orderId)
+    {
+        //order resevation of order id
+        $reservation = DB::table('reservations')
+            ->leftjoin('branches', 'branches.id', '=', 'reservations.branchId')
+            ->select('branches.name as branchName', 'reservations.*')
+            ->where('reservations.orderId', '=', $orderId)
+            ->get();
+
+        //find member point for the user
+        $userMemberPoint = userMemberPoint::where('userId', '=', Auth::id())->first();
+        $memberLevel = $userMemberPoint->memberLevel;
+        //find the discount in target member level
+        $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
+
+        //calculate the discount price
+        foreach ($reservation as $reservations) {
+            $reservation_price = $reservations->price;
+        }
+        $discount = $memberLevelDiscount->discount / 100;
+        $discount_amount = $reservation_price * $discount;
+        $total_price = $reservation_price - $discount_amount;
+
+        //calculate the after discount total price
+        $response = ['reservation' => $reservation, 'memberLevelDiscount' => $memberLevelDiscount, 'discountAmount' => $discount_amount, 'totalPrice' => $total_price];
+
+        // $response = ['reservation' => $reservation, 'memberLevelDiscount' => $memberLevelDiscount];
+
+        return response()->json($response, 200);
+    }
+
+    //display the edit reservation depend the reservation id
+    public function editReservation($id)
+    {
+        $reservation = reservation::all()
+            ->where('id', $id)
+            ->first();
+
+        $currentDate = Carbon::now(); //plus is ->addDays() minus is ->subDays()
+
+        $reservationDate = Carbon::parse($reservation->date);
+
+        $checkDate = $reservationDate->subDays(7); //plus is ->addDays() minus is ->subDays()
+
+        $difference = $currentDate->diffInDays($checkDate);
+
+        if ($checkDate < $currentDate) {
+            $response = ['message' => 'You only can edit the reservation 7 days before the reservation date!!'];
+
+            return response()->json($response, 400);
+        } else {
+            $reservation = reservation::all()->where('id', $id);
+            //get branch from the database
+            $branchs = branch::whereNot('status', '=', 'close')->get();
+
+            $response = ['reservation' => $reservation, 'branchs' => $branchs];
+
+            return response()->json($response, 200);
+        }
+    }
+
+    //update reservation to the database
+    public function updateReservation()
+    {
+        //if select normal wash
+        $r = request();
+        $carService = $r->serviceName;
+
+        if ($carService == 'Normal wash') {
+            $date = $r->date; //get the date
+            $branch = $r->branch; //get the branch id
+            $findSameDate1 = reservation::where([['date', '=', $date], ['Services', '=', 'Normal wash'], ['branchId', '=', $branch], ['timeSlot', '=', $timeSlot]])
+                ->whereNot('status', 'cancel')
+                ->get();
+            //echo $ServiceCount;
+            //calculate the normal wash in that time
+            if ($findSameDate1->count() >= 1) {
+                //if over 20 cannot booking success
+                Session::flash('Danger', 'Booking already full!');
+                //back to edit reservsation page
+                $id = $r->reservationId;
+                $reservation = reservation::all()->where('id', $id);
+
+                //get branch from the database
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                $response = ['message' => 'Booking already full!', 'branchs' => $branchs, 'services' => $services];
+                return response()->json($response, 400);
+            } else {
+                // update exist reservation to database
+                $reservation = reservation::find($r->reservationId);
+
+                $reservation->carPlate = $r->carPlate;
+                $reservation->date = $r->date;
+                $reservation->timeSlot = $r->timeSlot;
+                $reservation->branchId = $r->branch;
+                $reservation->save();
+
+                $response = ['message' => 'Upadate reservation successful!'];
+                return response()->json($response, 200);
+            }
+        } else {
+            $date = $r->date; //get the date
+            $branch = $r->branch; //get the branch id
+            $findSameDate2 = reservation::where([['date', '=', $date], ['branchId', '=', $branch]])
+                ->whereNot([['Services', '=', 'Normal wash'], ['status', '=', 'cancel']])
+                ->get();
+            $ServiceCount = $findSameDate2->count(); //calculate the normal wash in that time
+            //echo $ServiceCount;
+            if ($ServiceCount > 4) {
+                //if over 5 cannot booking success
+                Session::flash('Danger', 'Booking already full!');
+                //back to edit reservsation page
+
+                $id = $r->reservationId;
+                $reservation = reservation::all()->where('id', $id);
+
+                //get branch from the database
+                $branchs = branch::whereNot('status', '=', 'close')->get();
+
+                $response = ['message' => 'Booking already full!', 'branchs' => $branchs, 'services' => $services];
+                return response()->json($response, 400);
+            } else {
+                // update exist reservation to database
+                $reservation = reservation::find($r->reservationId);
+
+                $reservation->carPlate = $r->carPlate;
+                $reservation->date = $r->date;
+                $reservation->timeSlot = $r->timeSlot;
+                $reservation->branchId = $r->branch;
+                $reservation->save();
+
+                $response = ['message' => 'Upadate reservation successful!'];
                 return response()->json($response, 200);
             }
         }

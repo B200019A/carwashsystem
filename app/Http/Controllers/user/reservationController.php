@@ -464,7 +464,7 @@ class reservationController extends Controller
         $difference = $currentDate->diffInDays($checkDate);
 
         if ($checkDate < $currentDate) {
-            echo 'true';
+
             Session::flash('Danger', 'You only can cancel the reservation 7 days before the reservation date!!');
             return redirect()->route('viewMyReservation');
         } else {
