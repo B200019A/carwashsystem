@@ -27,9 +27,8 @@ class CarWashPackageSubscriptionController extends Controller
 
         $packages = packageSubscription::all();
 
-        return view('/user/CarWashPackageSubscription')
-            ->with('packages', $packages)
-            ->with('userPackages', $userPackages);
+        $response = ['userPackages' => $userPackages, 'packages' => $packages];
+        return response()->json($response, 200);
     }
     public function addNewPackage($id)
     {
@@ -61,7 +60,16 @@ class CarWashPackageSubscriptionController extends Controller
 
         $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
 
-        return view('/user/paymentPackage', compact('packageInformation', 'memberLevelDiscount', 'orderPackageId'));
+        //calculate the discount price
+        foreach ($packageInformation as $packageInformations) {
+            $packageInformation_price = $packageInformations->price;
+        }
+        $discount = $memberLevelDiscount->discount / 100;
+        $discount_amount = $packageInformation_price * $discount;
+        $total_package_price = $packageInformation_price - $discount_amount;
+
+        $response = ['packageInformation' => $packageInformation, 'memberLevelDiscount' => $memberLevelDiscount, 'orderPackageId', $orderPackageId,'discount_amount',$discount_amount,'total_package_price',$total_package_price];
+        return response()->json($response, 200);
     }
     //payment the package
     public function paymentPackage(Request $request)
@@ -89,12 +97,14 @@ class CarWashPackageSubscriptionController extends Controller
                 $id = $request->id;
                 DB::update('update user_package_subscriptions set paymentStatus = ?,price = ? where id = ?', [1, $totalAmount, $id]);
 
-                Session::flash('Success', 'Payment Successful!');
-                return redirect()->route('CarWashPackageSubscription');
+                $response = ['message' => 'Payment Succssful'];
+
+                return response()->json($response, 200);
             }
         } else {
-            Session::flash('NormalWashOverBooking', 'You already payment!!');
-            return redirect()->route('CarWashPackageSubscription');
+            $response = ['message' => 'You already payment!!'];
+
+            return response()->json($response, 400);
         }
     }
 
@@ -111,6 +121,17 @@ class CarWashPackageSubscriptionController extends Controller
         $memberLevelDiscount = memberLevel::where('memberLevel', '=', $memberLevel)->first();
 
         $orderPackageId = $id;
-        return view('/user/paymentPackage', compact('packageInformation', 'memberLevelDiscount', 'orderPackageId'));
+
+         //calculate the discount price
+         foreach ($packageInformation as $packageInformations) {
+            $packageInformation_price = $packageInformations->price;
+        }
+        $discount = $memberLevelDiscount->discount / 100;
+        $discount_amount = $packageInformation_price * $discount;
+        $total_package_price = $packageInformation_price - $discount_amount;
+
+        $response = ['packageInformation' => $packageInformation, 'memberLevelDiscount' => $memberLevelDiscount, 'orderPackageId', $orderPackageId,'discount_amount',$discount_amount,'total_package_price',$total_package_price];
+
+        return response()->json($response, 200);
     }
 }

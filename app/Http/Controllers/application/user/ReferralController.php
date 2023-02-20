@@ -81,8 +81,5 @@ class ReferralController extends Controller
             }
 
         }
-
-
-
     }
 }
