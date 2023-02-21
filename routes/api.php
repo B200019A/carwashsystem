@@ -57,6 +57,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //notification
     Route::get('/application/notification', [App\Http\Controllers\application\user\NotificationController::class, 'notification']);
 
+    //branch
+    Route::get('/application/branch', [App\Http\Controllers\application\user\BranchController::class, 'branch']);
+
+
 });
 //Login
 Route::post('/application/login', 'App\Http\Controllers\application\user\AuthController@login');
