@@ -234,7 +234,7 @@ class ReservationController extends Controller
                     'reservationId' => $reservationNumber,
                     'userId' => Auth::id(),
                     //skip the payment firsts
-                    'paymentStatus' => 1, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
+                    'paymentStatus' => 0, //(0 no payment, 1 done payment , 2 cancel payment need to refund, 3 refund success)
                     'amount' => $reservationPrice,
                     'memberPoint' => $totalGetMemberPoint,
                     'orderPackageId' => '0',
